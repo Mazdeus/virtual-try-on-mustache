@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7rl2ilwsvgik"]
+
+[ext_resource type="Script" uid="uid://dkvhca1hel7uf" path="res://Scenes/KumisNusantara/KumisWebcamController.gd" id="1"]
+[ext_resource type="Script" uid="uid://bprorri75p3un" path="res://Scenes/KumisNusantara/WebcamManagerUDP.gd" id="2"]
+
+[node name="KumisWebcamScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatusContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="MainContainer/StatusContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Connecting..."
+
+[node name="FPSLabel" type="Label" parent="MainContainer/StatusContainer"]
+layout_mode = 2
+text = "FPS: 0"
+
+[node name="WebcamContainer" type="CenterContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WebcamDisplay" type="TextureRect" parent="MainContainer/WebcamContainer"]
+custom_minimum_size = Vector2(640, 480)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ControlContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="MainContainer/ControlContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Kembali"
+
+[node name="ToggleKumisButton" type="Button" parent="MainContainer/ControlContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Sembunyikan Kumis"
+
+[node name="WebcamManagerUDP" type="Node" parent="."]
+script = ExtResource("2")

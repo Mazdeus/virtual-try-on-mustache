@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Godot
+.godot/
+*.import
+*.translation
+
+# Godot 4 specific
+.godot/
+
+# Models (optional - uncomment jika model size > 100MB)
+# models/*.pkl
+
+# Dataset (jangan push dataset ke GitHub!)
+Kumis_Server/data/faces/
+Kumis_Server/data/non_faces/
+*.jpg
+*.jpeg
+*.png
+# Kecuali assets yang diperlukan:
+!Kumis_Server/assets/**/*.png
+!Walking Simulator/Assets/**/*.png
+!*.import
+
+# Reports
+Kumis_Server/reports/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
