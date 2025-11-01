@@ -39,6 +39,15 @@ class FaceDetector:
         # Load Haar Cascade for eye detection
         eye_cascade_path = cv2.data.haarcascades + 'haarcascade_eye.xml'
         self.eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
+        
+        # Temporal smoothing: cache last detected face
+        self.last_faces = []
+        self.frames_without_detection = 0
+        self.max_frames_without_detection = 10  # Keep last face for 10 frames (~0.66s @ 15fps)
+        
+        # Angle smoothing for rotation stability
+        self.last_angle = 0.0
+        self.angle_smooth_factor = 0.3  # 30% new angle, 70% old angle
     
     def detect_faces(self, frame, nms_threshold=0.3):
         """
@@ -53,22 +62,52 @@ class FaceDetector:
         """
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        # Step 1: Haar Cascade face proposals
+        # Step 1: Haar Cascade face proposals (parameters relaxed for better detection)
         face_rois = self.face_cascade.detectMultiScale(
             gray,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(50, 50)
+            scaleFactor=1.05,  # Lebih sensitif (dari 1.1)
+            minNeighbors=3,    # Lebih toleran (dari 5)
+            minSize=(40, 40)   # Deteksi wajah lebih kecil (dari 50x50)
         )
         
         if len(face_rois) == 0:
             return []
         
-        # Step 2: Classify each ROI with SVM
+        # Step 2: Classify each ROI with SVM + validate face quality
         valid_faces = []
         confidences = []
         
+        frame_h, frame_w = gray.shape[:2]
+        
         for (x, y, w, h) in face_rois:
+            # Filter 1: Face size validation (harus masuk akal untuk wajah manusia)
+            face_area = w * h
+            frame_area = frame_w * frame_h
+            face_ratio = face_area / frame_area
+            
+            # Wajah terlalu kecil (<2%) atau terlalu besar (>60%) = bukan wajah
+            if face_ratio < 0.02 or face_ratio > 0.60:
+                continue
+            
+            # Filter 2: Aspect ratio validation (wajah biasanya mendekati 1:1 atau sedikit portrait)
+            aspect_ratio = w / h
+            if aspect_ratio < 0.6 or aspect_ratio > 1.5:  # Terlalu pipih atau terlalu tinggi
+                continue
+            
+            # Filter 3: Position validation (prioritas center frame)
+            face_center_x = x + w // 2
+            face_center_y = y + h // 2
+            center_distance = np.sqrt(
+                ((face_center_x - frame_w/2) / frame_w) ** 2 + 
+                ((face_center_y - frame_h/2) / frame_h) ** 2
+            )
+            
+            # Perketat: wajah terlalu di pinggir (>0.4 dari center) = reject
+            # Lemari biasanya di edge frame
+            if center_distance > 0.4:
+                continue
+            
+            # Filter 4: SVM classification
             roi = gray[y:y+h, x:x+w]
             roi_resized = cv2.resize(roi, (128, 128))
             
@@ -92,16 +131,56 @@ class FaceDetector:
             
             # Only keep faces above threshold
             if pred == 1 and confidence >= self.confidence_threshold:
+                # Boost confidence for faces near center
+                adjusted_confidence = confidence * (1.0 + (0.5 - center_distance))
                 valid_faces.append((x, y, w, h))
-                confidences.append(confidence)
+                confidences.append(adjusted_confidence)
         
         if len(valid_faces) == 0:
+            # Temporal smoothing: use last detected faces if available
+            self.frames_without_detection += 1
+            if self.frames_without_detection <= self.max_frames_without_detection and len(self.last_faces) > 0:
+                return self.last_faces  # Return cached faces
             return []
+        
+        # Reset counter when faces are detected
+        self.frames_without_detection = 0
         
         # Step 3: Non-Maximum Suppression
         final_faces = non_max_suppression(valid_faces, confidences, nms_threshold)
         
-        # Step 4: Detect eyes for each face
+        # Step 3.5: MANDATORY eye detection - prioritize faces with eyes
+        faces_with_eyes = []
+        faces_without_eyes = []
+        
+        for face in final_faces:
+            face_roi = gray[face[1]:face[1]+face[3], face[0]:face[0]+face[2]]
+            eyes = self.detect_eyes(face_roi, (face[0], face[1]))
+            
+            if eyes is not None:
+                faces_with_eyes.append((face, face[2] * face[3], eyes))
+            else:
+                faces_without_eyes.append((face, face[2] * face[3], None))
+        
+        # STRICT: Only accept faces WITH eyes detected (reject lemari!)
+        if len(faces_with_eyes) > 0:
+            # Sort by area (largest first) among faces with eyes
+            faces_with_eyes.sort(key=lambda x: x[1], reverse=True)
+            # Return only the largest face with eyes detected
+            selected_face = faces_with_eyes[0]
+            final_faces = [selected_face[0]]
+        else:
+            # NO faces with eyes = NO detection (reject all)
+            final_faces = []
+        
+        if len(final_faces) == 0:
+            # No valid faces with eyes detected
+            self.frames_without_detection += 1
+            if self.frames_without_detection <= self.max_frames_without_detection and len(self.last_faces) > 0:
+                return self.last_faces  # Return cached faces
+            return []
+        
+        # Step 4: Detect eyes for final selected face(s)
         results = []
         for (x, y, w, h) in final_faces:
             face_roi = gray[y:y+h, x:x+w]
@@ -112,6 +191,9 @@ class FaceDetector:
                 'confidence': 1.0,  # Could store actual confidence
                 'eyes': eyes
             })
+        
+        # Cache detected faces for temporal smoothing
+        self.last_faces = results
         
         return results
     
@@ -132,13 +214,15 @@ class FaceDetector:
         
         eyes = self.eye_cascade.detectMultiScale(
             eye_region,
-            scaleFactor=1.05,  # More sensitive
-            minNeighbors=3,    # Less strict
+            scaleFactor=1.02,  # Lebih sensitif (dari 1.03)
+            minNeighbors=2,    # Tetap toleran
             minSize=(int(w*0.08), int(h*0.08)),  # Adaptive min size
             maxSize=(int(w*0.35), int(h*0.35))   # Adaptive max size
         )
         
         if len(eyes) < 2:
+            # Eye detection tidak wajib - return None untuk fallback ke posisi default
+            # Kumis tetap muncul tanpa rotasi
             return None
         
         # Convert to absolute coordinates
@@ -158,8 +242,8 @@ class FaceDetector:
             dy = abs(eye_centers[1][1] - eye_centers[0][1])
             dx = abs(eye_centers[1][0] - eye_centers[0][0])
             
-            # If eyes are too vertically misaligned or too close, reject
-            if dy > dx * 0.3 or dx < w * 0.15:
+            # Relaksasi lebih lanjut untuk rotasi kepala
+            if dy > dx * 0.5 or dx < w * 0.08:  # Dari 0.4 dan 0.10, lebih toleran
                 return None
         
         return eye_centers

@@ -13,13 +13,8 @@ var server_host: String = "127.0.0.1"
 var server_port: int = 8888
 var kumis_ack_timeout_frames: int = 60
 
-# ----------------- Kumis styles mapping (13 styles!) -----------------
+# ----------------- Kumis styles mapping (12 styles!) -----------------
 var kumis_info := {
-	"chevron": {
-		"file": "chevron.png",
-		"name": "Classic",
-		"preview": "res://Assets/Kumis/chevron.png"
-	},
 	"kumis_1": {
 		"file": "kumis_1.png",
 		"name": "Style 1",
@@ -99,9 +94,13 @@ func create_kumis_buttons():
 	"""Dynamically create button for each kumis style"""
 	print("Creating buttons for %d kumis styles..." % kumis_info.size())
 	
-	# Sort keys to maintain order (chevron, kumis_1, kumis_2, ...)
+	# Sort keys by numeric order (kumis_1, kumis_2, ..., kumis_10, kumis_11, kumis_12)
 	var sorted_keys = kumis_info.keys()
-	sorted_keys.sort()
+	sorted_keys.sort_custom(func(a, b):
+		var num_a = int(a.replace("kumis_", ""))
+		var num_b = int(b.replace("kumis_", ""))
+		return num_a < num_b
+	)
 	
 	for style_key in sorted_keys:
 		var info = kumis_info[style_key]

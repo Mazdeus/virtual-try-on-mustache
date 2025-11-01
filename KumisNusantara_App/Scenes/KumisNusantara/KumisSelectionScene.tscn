@@ -27,7 +27,7 @@ grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="MainContainer"]
 layout_mode = 2
-text = "Pilih Gaya Kumis (13 Styles!)"
+text = "Pilih Gaya Kumis (12 Styles!)"
 horizontal_alignment = 1
 vertical_alignment = 1
 

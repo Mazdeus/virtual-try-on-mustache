@@ -16,6 +16,9 @@ var fps_timer: float = 0.0
 func _ready():
 	print("=== KumisWebcamController._ready() ===")
 	
+	# Enable fullscreen mode
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	
 	# Connect WebcamManager signals
 	webcam_manager.frame_received.connect(_on_frame_received)
 	webcam_manager.connection_changed.connect(_on_connection_changed)
@@ -32,7 +35,7 @@ func _ready():
 	# Connect to server
 	webcam_manager.connect_to_webcam_server()
 	
-	print("Kumis webcam scene initialized")
+	print("Kumis webcam scene initialized (FULLSCREEN mode)")
 
 
 func _process(delta):
@@ -42,6 +45,20 @@ func _process(delta):
 		fps_label.text = "FPS: %d" % frame_count
 		frame_count = 0
 		fps_timer = 0.0
+	
+	# Handle fullscreen toggle (F11 key)
+	if Input.is_action_just_pressed("ui_cancel"):  # ESC key
+		_toggle_fullscreen()
+
+
+func _toggle_fullscreen():
+	"""Toggle between fullscreen and windowed mode"""
+	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		print("📐 Switched to WINDOWED mode")
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		print("🖥️ Switched to FULLSCREEN mode")
 
 
 func _on_frame_received(texture: ImageTexture):

@@ -90,7 +90,7 @@ class UDPKumisServer:
                 scaler=scaler,
                 bovw_encoder=bovw_encoder,
                 orb_extractor=orb_extractor,
-                confidence_threshold=0.5
+                confidence_threshold=0.25  # Balance: tidak terlalu rendah (false positives) atau tinggi (missed detections)
             )
             
             print(f"  ✅ Models loaded successfully!")
@@ -102,27 +102,112 @@ class UDPKumisServer:
             print(f"     Please train models first: python app.py train")
             sys.exit(1)
     
-    def initialize_camera(self):
-        """Initialize webcam."""
+    def detect_available_cameras(self, max_cameras=5):
+        """Detect available cameras and let user choose."""
+        print(f"\n🔍 Scanning for available cameras...")
+        available_cameras = []
+        
+        # Test multiple backends for each camera ID
+        backends = [
+            (cv2.CAP_DSHOW, "DirectShow"),
+            (cv2.CAP_MSMF, "Media Foundation"),
+            (cv2.CAP_ANY, "Default")
+        ]
+        
+        for cam_id in range(max_cameras):
+            for backend_id, backend_name in backends:
+                try:
+                    cap = cv2.VideoCapture(cam_id, backend_id)
+                    if cap.isOpened():
+                        # Try to read a frame to verify it works
+                        ret, frame = cap.read()
+                        if ret and frame is not None:
+                            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                            fps = int(cap.get(cv2.CAP_PROP_FPS))
+                            available_cameras.append({
+                                'id': cam_id,
+                                'backend': backend_id,
+                                'backend_name': backend_name,
+                                'width': width,
+                                'height': height,
+                                'fps': fps
+                            })
+                            cap.release()
+                            print(f"  ✅ Camera {cam_id} ({backend_name}): {width}x{height} @ {fps}FPS")
+                            break  # Found working backend for this camera
+                    cap.release()
+                except:
+                    pass
+        
+        return available_cameras
+    
+    def initialize_camera(self, auto_detect=False):
+        """Initialize webcam with multi-backend support."""
         print(f"\n🎥 Initializing camera {self.camera_id}...")
         
-        # Try DirectShow backend first (faster on Windows)
-        self.cap = cv2.VideoCapture(self.camera_id, cv2.CAP_DSHOW)
+        # Auto-detect mode
+        if auto_detect:
+            available_cameras = self.detect_available_cameras()
+            if not available_cameras:
+                print(f"  ❌ No cameras detected!")
+                print(f"  💡 Tips:")
+                print(f"     - Check if webcam is plugged in")
+                print(f"     - Close other apps using webcam (Zoom, Teams, etc)")
+                print(f"     - Check webcam permissions in Windows Settings")
+                sys.exit(1)
+            
+            # Use first available camera
+            cam_info = available_cameras[0]
+            self.camera_id = cam_info['id']
+            backend = cam_info['backend']
+            print(f"\n  📹 Auto-selected: Camera {self.camera_id} ({cam_info['backend_name']})")
+        else:
+            backend = None
         
-        if not self.cap.isOpened():
-            print(f"  ⚠️ DirectShow failed, trying default backend...")
-            # Fallback to default backend
-            self.cap = cv2.VideoCapture(self.camera_id)
+        # Try multiple backends in order
+        backends_to_try = [
+            (cv2.CAP_DSHOW, "DirectShow"),
+            (cv2.CAP_MSMF, "Media Foundation"),
+            (cv2.CAP_ANY, "Default")
+        ]
         
-        if not self.cap.isOpened():
+        # If specific backend detected, try it first
+        if backend is not None:
+            backends_to_try = [(backend, "Auto-detected")] + backends_to_try
+        
+        self.cap = None
+        for backend_id, backend_name in backends_to_try:
+            try:
+                print(f"  🔄 Trying {backend_name} backend...")
+                test_cap = cv2.VideoCapture(self.camera_id, backend_id)
+                
+                if test_cap.isOpened():
+                    # Test read frame
+                    ret, test_frame = test_cap.read()
+                    if ret and test_frame is not None:
+                        self.cap = test_cap
+                        print(f"  ✅ Success with {backend_name}!")
+                        break
+                    else:
+                        test_cap.release()
+                else:
+                    test_cap.release()
+            except Exception as e:
+                print(f"  ⚠️ {backend_name} failed: {e}")
+                continue
+        
+        if self.cap is None or not self.cap.isOpened():
             print(f"  ❌ Cannot open camera {self.camera_id}")
             print(f"  💡 Tips:")
             print(f"     - Close other apps using webcam (Zoom, Teams, etc)")
-            print(f"     - Try different camera ID: --camera 1")
+            print(f"     - Try different camera ID: --camera 1 or --camera 2")
+            print(f"     - Use --auto-detect to scan all cameras")
             print(f"     - Check webcam permissions in Windows Settings")
+            print(f"     - Try unplugging and replugging the webcam")
             sys.exit(1)
         
-        # Set properties with timeout protection
+        # Set properties
         print(f"  ⏳ Configuring camera settings...")
         
         try:
@@ -133,16 +218,17 @@ class UDPKumisServer:
             # Set FPS (optional, might not be supported)
             self.cap.set(cv2.CAP_PROP_FPS, self.fps)
             
-            # Enable auto-exposure for better brightness (default is usually ON)
-            self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75)  # 0.75 = auto mode
+            # Enable auto-exposure for better brightness
+            self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75)
             
-            # Optionally increase brightness slightly
-            self.cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.5)  # Range: 0.0 to 1.0
+            # Increase brightness slightly
+            self.cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.5)
             
-            # Test read a frame to ensure camera is working
-            ret, test_frame = self.cap.read()
-            if not ret or test_frame is None:
-                raise Exception("Cannot read from camera")
+            # Disable autofocus if causing issues
+            self.cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+            
+            # Set buffer size to 1 (reduce latency)
+            self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
             
         except Exception as e:
             print(f"  ⚠️ Warning during configuration: {e}")
@@ -158,6 +244,12 @@ class UDPKumisServer:
         # Update server settings to match actual camera
         self.width = actual_width
         self.height = actual_height
+        
+        # Warm up camera (discard first few frames)
+        print(f"  🔥 Warming up camera...")
+        for _ in range(5):
+            self.cap.read()
+        print(f"  ✅ Camera ready!")
     
     def start(self):
         """Start server threads."""
@@ -371,6 +463,25 @@ class UDPKumisServer:
             # Detect faces
             faces = self.face_detector.detect_faces(frame, nms_threshold=0.3)
             
+            # Debug logging (setiap 30 frames)
+            if hasattr(self, '_frame_count'):
+                self._frame_count += 1
+            else:
+                self._frame_count = 0
+                
+            if self._frame_count % 30 == 0:
+                if len(faces) > 0:
+                    # Log face info for debugging
+                    for i, face_data in enumerate(faces):
+                        x, y, w, h = face_data['box']
+                        area_ratio = (w * h) / (frame.shape[0] * frame.shape[1])
+                        center_x = x + w // 2
+                        center_y = y + h // 2
+                        has_eyes = "✅ EYES" if face_data['eyes'] is not None else "❌ NO EYES"
+                        print(f"  🔍 Face {i+1}: {w}x{h} ({area_ratio:.1%}), center=({center_x},{center_y}), {has_eyes}")
+                else:
+                    print(f"  🔍 No faces detected")
+            
             # Overlay kumis on each face
             for face_data in faces:
                 frame = self.kumis_overlay.overlay(
@@ -408,14 +519,49 @@ def main():
     """Main entry point."""
     import argparse
     
-    parser = argparse.ArgumentParser(description='UDP Kumis Server')
-    parser.add_argument('--camera', type=int, default=0, help='Camera device ID')
+    parser = argparse.ArgumentParser(
+        description='UDP Kumis Server with Multi-Backend Webcam Support',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Auto-detect and use first available camera
+  python udp_kumis_server.py --auto-detect
+  
+  # Use specific camera ID
+  python udp_kumis_server.py --camera 0
+  python udp_kumis_server.py --camera 1  # External webcam
+  
+  # List all available cameras
+  python udp_kumis_server.py --list-cameras
+        """
+    )
+    parser.add_argument('--camera', type=int, default=0, help='Camera device ID (0=default, 1=external)')
+    parser.add_argument('--auto-detect', action='store_true', help='Auto-detect and use first available camera')
+    parser.add_argument('--list-cameras', action='store_true', help='List all available cameras and exit')
     parser.add_argument('--width', type=int, default=640, help='Frame width')
     parser.add_argument('--height', type=int, default=480, help='Frame height')
     parser.add_argument('--fps', type=int, default=15, help='Target FPS')
     parser.add_argument('--models', default='models', help='Models directory')
     
     args = parser.parse_args()
+    
+    # List cameras mode
+    if args.list_cameras:
+        print("\n" + "=" * 60)
+        print("🎥 Available Cameras")
+        print("=" * 60)
+        temp_server = UDPKumisServer()
+        cameras = temp_server.detect_available_cameras()
+        if not cameras:
+            print("\n❌ No cameras detected!")
+        else:
+            print(f"\n✅ Found {len(cameras)} camera(s):\n")
+            for cam in cameras:
+                print(f"  Camera {cam['id']}: {cam['backend_name']}")
+                print(f"    Resolution: {cam['width']}x{cam['height']}")
+                print(f"    FPS: {cam['fps']}")
+                print()
+        sys.exit(0)
     
     # Create server
     server = UDPKumisServer(
@@ -429,7 +575,7 @@ def main():
     server.load_models(args.models)
     
     # Initialize camera
-    server.initialize_camera()
+    server.initialize_camera(auto_detect=args.auto_detect)
     
     # Start server
     server.start()

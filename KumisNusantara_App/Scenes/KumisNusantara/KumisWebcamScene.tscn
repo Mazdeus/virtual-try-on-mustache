@@ -37,7 +37,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="WebcamDisplay" type="TextureRect" parent="MainContainer/WebcamContainer"]
-custom_minimum_size = Vector2(640, 480)
+custom_minimum_size = Vector2(960, 720)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5

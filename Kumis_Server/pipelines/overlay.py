@@ -19,6 +19,8 @@ class KumisOverlay:
             kumis_path: Path to kumis PNG file (with alpha channel)
         """
         self.kumis_img = None
+        self.last_angle = 0.0  # For angle smoothing
+        self.angle_smooth_factor = 0.4  # 40% new angle, 60% old angle
         if kumis_path:
             self.load_kumis(kumis_path)
     
@@ -66,12 +68,17 @@ class KumisOverlay:
         # Step 1: Scale kumis to fit face
         kumis_scaled = self._scale_kumis(w, scale_factor)
         
-        # Step 2: Rotate kumis based on eyes
+        # Step 2: Rotate kumis based on eyes with smoothing
         if eyes is not None and len(eyes) >= 2:
             angle = self._calculate_face_angle(eyes)
-            kumis_rotated = self._rotate_kumis(kumis_scaled, angle)
+            # Smooth angle to reduce jitter
+            smoothed_angle = self.last_angle * (1 - self.angle_smooth_factor) + angle * self.angle_smooth_factor
+            self.last_angle = smoothed_angle
+            kumis_rotated = self._rotate_kumis(kumis_scaled, smoothed_angle)
         else:
-            kumis_rotated = kumis_scaled
+            # No eyes detected, gradually return to 0 rotation
+            self.last_angle = self.last_angle * 0.8  # Decay to 0
+            kumis_rotated = self._rotate_kumis(kumis_scaled, self.last_angle) if abs(self.last_angle) > 0.5 else kumis_scaled
         
         # Step 3: Calculate position (mouth position)
         mouth_pos = self._estimate_mouth_position(face_box, eyes)
