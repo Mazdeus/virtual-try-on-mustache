@@ -335,16 +335,27 @@ taskkill /PID <PID> /F          # Kill process
 
 ---
 
-## 📊 Performance Comparison
+## Benchmark Performance
+### **Step 1: Jalankan Benchmark**
 
-| Method | Accuracy | Inference | Model Size | Memory | GPU |
-|--------|----------|-----------|------------|--------|-----|
-| **SVM+ORB (Ours)** | 83.8% | 50-60ms | <5MB | ~200MB | ❌ No |
-| MTCNN (Deep Learning) | ~95% | 200-300ms | ~20MB | ~800MB | ✅ Yes |
-| Dlib (HOG+SVM) | ~92% | 150-200ms | ~100MB | ~500MB | ❌ No |
-| MediaPipe (TF Lite) | ~96% | 100-150ms | ~10MB | ~400MB | ❌ No |
+```powershell
+cd Kumis_Server
 
-**Conclusion**: SVM+ORB optimal untuk **consumer devices** (CPU-only, low memory, real-time) dengan trade-off akurasi 11.2% untuk speed gain 4-6×.
+# Jalankan benchmark selama 90 detik (tanpa display untuk akurasi maksimal)
+python benchmark_performance.py --duration 90 --no-display --output reports/benchmark_official.json
+```
+
+**Catatan:**
+- Pastikan wajah Anda terdeteksi dengan baik (duduk di depan kamera)
+- Lighting cukup (300-500 lux)
+- Close aplikasi lain yang pakai webcam
+
+### **Step 2: Buka Report JSON**
+
+```powershell
+# File akan tersimpan di:
+Kumis_Server/reports/benchmark_official.json
+```
 
 ---
 
