@@ -52,7 +52,7 @@ wheels/
 !Kumis_Server/data/**/*.jpg
 !Kumis_Server/data/**/*.jpeg
 !Kumis_Server/data/**/*.png
-!KumisNusantara_App/Assets/**/*.png
+!Kumis_App/Assets/**/*.png
 !Walking Simulator/Assets/**/*.png
 !*.import
 

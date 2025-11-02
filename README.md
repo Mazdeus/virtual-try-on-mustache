@@ -75,7 +75,7 @@ virtual-try-on-mustache/
     │   │   ├── MainMenu.tscn        # Main menu UI
     │   │   └── MainMenuController.gd
     │   │
-    │   └── KumisNusantara/           # Main app scenes
+    │   └── Kumis/           # Main app scenes
     │       ├── KumisSelectionScene.tscn    # Kumis selection (grid 12 styles)
     │       ├── KumisSelectionController.gd  # Selection logic + sorting
     │       ├── KumisWebcamScene.tscn       # Webcam display (960×720)

@@ -263,7 +263,7 @@ func _on_pilih_button_pressed():
 			send_kumis_to_server_fire_and_forget(kumis_file)
 		
 		# Go to webcam scene immediately
-		get_tree().change_scene_to_file("res://Scenes/KumisNusantara/KumisWebcamScene.tscn")
+		get_tree().change_scene_to_file("res://Scenes/Kumis/KumisWebcamScene.tscn")
 	else:
 		print("No kumis selected")
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cfugr5313j56i"]
 
-[ext_resource type="Script" uid="uid://b8dfbe5xojt32" path="res://Scenes/KumisNusantara/KumisSelectionController.gd" id="1"]
+[ext_resource type="Script" uid="uid://b8dfbe5xojt32" path="res://Scenes/Kumis/KumisSelectionController.gd" id="1"]
 
 [node name="KumisSelectionScene" type="Control"]
 layout_mode = 3

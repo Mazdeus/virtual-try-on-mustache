@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c7rl2ilwsvgik"]
 
-[ext_resource type="Script" uid="uid://dkvhca1hel7uf" path="res://Scenes/KumisNusantara/KumisWebcamController.gd" id="1"]
-[ext_resource type="Script" uid="uid://bprorri75p3un" path="res://Scenes/KumisNusantara/WebcamManagerUDP.gd" id="2"]
+[ext_resource type="Script" uid="uid://dkvhca1hel7uf" path="res://Scenes/Kumis/KumisWebcamController.gd" id="1"]
+[ext_resource type="Script" uid="uid://bprorri75p3un" path="res://Scenes/Kumis/WebcamManagerUDP.gd" id="2"]
 
 [node name="KumisWebcamScene" type="Control"]
 layout_mode = 3

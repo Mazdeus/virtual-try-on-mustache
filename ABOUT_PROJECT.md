@@ -285,7 +285,7 @@ var kumis_enabled: bool = true                 # Overlay on/off
 - Navigation to kumis selection
 - App settings and quit functionality
 
-**`KumisNusantara/KumisSelectionController.gd`**
+**`Kumis/KumisSelectionController.gd`**
 - **Most complex scene controller**
 - Dynamic button generation for 13 styles
 - Preview image loading
@@ -310,7 +310,7 @@ func create_kumis_buttons():
         # Add to grid...
 ```
 
-**`KumisNusantara/KumisWebcamController.gd`**
+**`Kumis/KumisWebcamController.gd`**
 - UDP client implementation
 - Frame reception and decoding
 - Texture display
@@ -1080,7 +1080,7 @@ Filter-Face-Godot-Ver-main/
 │   │   │   ├── MainMenu.tscn
 │   │   │   └── MainMenuController.gd
 │   │   │
-│   │   ├── KumisNusantara/
+│   │   ├── Kumis/
 │   │   │   ├── KumisSelectionScene.tscn
 │   │   │   ├── KumisSelectionController.gd
 │   │   │   ├── KumisWebcamScene.tscn

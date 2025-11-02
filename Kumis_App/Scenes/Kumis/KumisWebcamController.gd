@@ -102,7 +102,7 @@ func _on_back_pressed():
 	"""Return to kumis selection"""
 	print("Back button pressed")
 	webcam_manager.disconnect_from_server()
-	get_tree().change_scene_to_file("res://Scenes/KumisNusantara/KumisSelectionScene.tscn")
+	get_tree().change_scene_to_file("res://Scenes/Kumis/KumisSelectionScene.tscn")
 
 
 func send_command_to_server(command: String):

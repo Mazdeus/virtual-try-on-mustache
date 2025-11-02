@@ -23,7 +23,7 @@ func _ready():
 func _on_try_on_button_pressed():
 	"""Navigate to Kumis Selection scene"""
 	print("Try On button pressed - going to Kumis Selection")
-	get_tree().change_scene_to_file("res://Scenes/KumisNusantara/KumisSelectionScene.tscn")
+	get_tree().change_scene_to_file("res://Scenes/Kumis/KumisSelectionScene.tscn")
 
 func _on_quit_button_pressed():
 	"""Quit the application"""
