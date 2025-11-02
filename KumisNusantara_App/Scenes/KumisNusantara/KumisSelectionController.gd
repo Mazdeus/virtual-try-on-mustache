@@ -119,11 +119,23 @@ func create_kumis_buttons():
 		texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		
 		# Load kumis texture
+		# Prefer resource load (uses imported .ctex when available). If that fails
+		# (for example when imported .ctex is missing), fall back to loading the
+		# raw image and creating an ImageTexture at runtime so previews still show.
 		var texture = load(info.preview)
 		if texture:
 			texture_rect.texture = texture
 		else:
-			print("⚠️ Failed to load texture: %s" % info.preview)
+			# Fallback: try to load raw image and convert to ImageTexture
+			var img = Image.new()
+			var img_err = img.load(info.preview)
+			if img_err == OK:
+				# Godot 4: create_from_image is a static method
+				var dyn_tex = ImageTexture.create_from_image(img)
+				texture_rect.texture = dyn_tex
+				print("⚠️ Loaded image at runtime (fallback) for: %s" % info.preview)
+			else:
+				print("⚠️ Failed to load texture and fallback failed: %s (err=%s)" % [info.preview, str(img_err)])
 		
 		# Add background panel to image with margin
 		var panel = Panel.new()

@@ -51,6 +51,7 @@ Kumis_Server/data/non_faces/
 *.png
 # Kecuali assets yang diperlukan:
 !Kumis_Server/assets/**/*.png
+!KumisNusantara_App/Assets/**/*.png
 !Walking Simulator/Assets/**/*.png
 !*.import
 
