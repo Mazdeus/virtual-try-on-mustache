@@ -1,0 +1,42 @@
+{
+  "k": 256,
+  "max_descriptors": 200000,
+  "nfeatures": 500,
+  "svm_kernel": "linear",
+  "C": 1.0,
+  "gamma": "scale",
+  "val_metrics": {
+    "accuracy": 0.8456666666666667,
+    "precision": 0.8573397656788422,
+    "recall": 0.8293333333333334,
+    "f1_score": 0.8431040325313454,
+    "roc_auc": 0.9193377777777778,
+    "confusion_matrix": [
+      [
+        1293,
+        207
+      ],
+      [
+        256,
+        1244
+      ]
+    ]
+  },
+  "test_metrics": {
+    "accuracy": 0.8383333333333334,
+    "precision": 0.8473648186173853,
+    "recall": 0.8253333333333334,
+    "f1_score": 0.8362039851401554,
+    "roc_auc": 0.9200857777777778,
+    "confusion_matrix": [
+      [
+        1277,
+        223
+      ],
+      [
+        262,
+        1238
+      ]
+    ]
+  }
+}

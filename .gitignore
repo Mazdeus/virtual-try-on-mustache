@@ -43,20 +43,18 @@ wheels/
 # Models (optional - uncomment jika model size > 100MB)
 # models/*.pkl
 
-# Dataset (jangan push dataset ke GitHub!)
-Kumis_Server/data/faces/
-Kumis_Server/data/non_faces/
+# Ignore large images EXCEPT in data and assets folders
 *.jpg
 *.jpeg
 *.png
-# Kecuali assets yang diperlukan:
+# Kecuali assets dan data yang diperlukan:
 !Kumis_Server/assets/**/*.png
+!Kumis_Server/data/**/*.jpg
+!Kumis_Server/data/**/*.jpeg
+!Kumis_Server/data/**/*.png
 !KumisNusantara_App/Assets/**/*.png
 !Walking Simulator/Assets/**/*.png
 !*.import
-
-# Reports
-Kumis_Server/reports/
 
 # Logs
 *.log
