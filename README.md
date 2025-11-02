@@ -348,33 +348,12 @@ taskkill /PID <PID> /F          # Kill process
 
 ---
 
-## ❓ FAQ
-
-**Q: Apakah bisa rename folder `KumisNusantara_App` menjadi `Kumis_App`?**  
-**A**: ✅ **Aman!** Godot menggunakan path relatif (`res://`), bukan absolute path. Rename folder tidak akan menyebabkan error.
-
-**Q: Apakah butuh GPU untuk menjalankan?**  
-**A**: ❌ **Tidak!** Program ini CPU-only, cocok untuk laptop biasa (~200MB RAM).
-
-**Q: Kenapa akurasi hanya 83.8%?**  
-**A**: Trade-off Classical ML vs Deep Learning. SVM+ORB 4-6× lebih cepat (50ms vs 200ms), tapi akurasi -11.2%. Optimal untuk real-time CPU.
-
-**Q: Bagaimana cara menambah kumis style baru?**  
-**A**: 
-1. Tambahkan `kumis_13.png` (PNG with alpha) ke `Kumis_Server/assets/kumis/`
-2. Copy file yang sama ke `Kumis_App/Assets/Kumis/`
-3. Restart Godot (auto re-import)
-4. Kumis muncul otomatis di selection grid
-
----
-
 ## 📝 Credits
 
 **Developed by:**
-- **Institution**: Politeknik Negeri Bandung (POLBAN)
-- **Course**: Pengolahan Citra Digital (Praktikum ETS)
-- **Department**: Teknik Informatika, Semester 5
-- **Team**: 3 Mahasiswa (Research, ML Dev, Frontend/QA)
+- **Faisal**
+- **Amadeus**
+- **Hasbi**
 
 **Technologies:**
 - Godot Engine 4.x, OpenCV, Scikit-learn, NumPy
@@ -393,14 +372,3 @@ taskkill /PID <PID> /F          # Kill process
   - Performance: 83.8% accuracy, 50-60ms inference
 
 ---
-
-## 📞 Contact
-
-- **GitHub**: https://github.com/Mazdeus/virtual-try-on-mustache
-- **Institution**: Politeknik Negeri Bandung - Teknik Informatika
-
----
-
-**Last Updated**: November 2, 2025  
-**Version**: 2.0.0  
-**Status**: ✅ Production Ready
