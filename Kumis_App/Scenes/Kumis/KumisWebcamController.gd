@@ -5,6 +5,7 @@ extends Control
 @onready var status_label = $MainHBox/LeftPanel/HeaderPanel/MarginContainer/HBoxContainer/StatusLabel
 @onready var fps_label = $MainHBox/LeftPanel/HeaderPanel/MarginContainer/HBoxContainer/FPSLabel
 @onready var toggle_kumis_button = $MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer/ToggleKumisButton
+@onready var screenshot_button = $MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer/ScreenshotButton
 @onready var back_button = $MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer/BackButton
 @onready var kumis_grid = $MainHBox/RightPanel/KumisScrollContainer/KumisGridContainer
 @onready var color_grid = $MainHBox/RightPanel/ColorPanel/MarginContainer/VBoxContainer/ColorGrid
@@ -46,6 +47,7 @@ func _ready():
 	
 	# Connect buttons
 	toggle_kumis_button.pressed.connect(_on_toggle_kumis_pressed)
+	screenshot_button.pressed.connect(_on_screenshot_pressed)
 	back_button.pressed.connect(_on_back_pressed)
 	
 	# Initialize kumis selection grid
@@ -294,6 +296,19 @@ func _on_toggle_kumis_pressed():
 	toggle_kumis_button.text = "👁 Sembunyikan Kumis" if kumis_enabled else "👁 Tampilkan Kumis"
 	
 	print("Kumis toggled:", kumis_enabled)
+
+
+func _on_screenshot_pressed():
+	"""Capture screenshot"""
+	print("Screenshot button pressed")
+	
+	# Send command to server
+	send_command_to_server("SCREENSHOT")
+	
+	# Show visual feedback
+	screenshot_button.text = "✅ Tersimpan!"
+	await get_tree().create_timer(1.5).timeout
+	screenshot_button.text = "📸 Foto"
 
 
 func _on_back_pressed():

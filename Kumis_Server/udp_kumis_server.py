@@ -10,6 +10,7 @@ import threading
 import time
 import sys
 from pathlib import Path
+from datetime import datetime
 
 # Import pipeline modules
 from pipelines.infer import FaceDetector
@@ -64,6 +65,11 @@ class UDPKumisServer:
         self.running = False
         self.current_kumis = None
         self.show_kumis = True
+        self.latest_frame = None  # Store latest processed frame for screenshot
+        
+        # Create screenshots directory
+        self.screenshots_dir = Path('screenshots')
+        self.screenshots_dir.mkdir(exist_ok=True)
         
         print("=" * 50)
         print("🥸 Kumis Try-On Server (SVM+ORB)")
@@ -387,6 +393,10 @@ class UDPKumisServer:
                     if color_param:
                         self._set_kumis_color(color_param)
                 
+                elif cmd == 'SCREENSHOT' or cmd == 'CAPTURE':
+                    # Capture screenshot
+                    self._save_screenshot()
+                
                 elif cmd == 'DISCONNECT':
                     # Remove client
                     if addr in self.clients:
@@ -428,6 +438,9 @@ class UDPKumisServer:
                 # Detect faces and overlay kumis
                 if self.show_kumis and self.kumis_overlay is not None:
                     frame = self._process_frame(frame)
+                
+                # Store latest frame for screenshot
+                self.latest_frame = frame.copy()
                 
                 # Encode as JPEG with higher quality (85 = good balance)
                 encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 85]
@@ -582,6 +595,28 @@ class UDPKumisServer:
                     print(f"  ⚠️ Invalid color format: {color_param}")
         except Exception as e:
             print(f"  ❌ Error setting color: {e}")
+    
+    def _save_screenshot(self):
+        """Save current frame as screenshot."""
+        if self.latest_frame is None:
+            print(f"  ⚠️ No frame available for screenshot")
+            return
+        
+        try:
+            # Generate filename with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            kumis_name = self.current_kumis.replace('.png', '') if self.current_kumis else 'no_kumis'
+            filename = f"kumis_{kumis_name}_{timestamp}.jpg"
+            filepath = self.screenshots_dir / filename
+            
+            # Save with high quality
+            cv2.imwrite(str(filepath), self.latest_frame, [cv2.IMWRITE_JPEG_QUALITY, 95])
+            
+            print(f"  📸 Screenshot saved: {filepath}")
+            print(f"  ✅ File size: {filepath.stat().st_size / 1024:.1f} KB")
+            
+        except Exception as e:
+            print(f"  ❌ Error saving screenshot: {e}")
 
 
 def main():

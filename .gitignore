@@ -59,6 +59,9 @@ wheels/
 # Logs
 *.log
 
+# Screenshots (user generated)
+Kumis_Server/screenshots/
+
 # OS
 .DS_Store
 Thumbs.db

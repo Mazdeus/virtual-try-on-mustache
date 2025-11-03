@@ -104,6 +104,13 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
 text = "👁 Sembunyikan Kumis"
 
+[node name="ScreenshotButton" type="Button" parent="MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "📸 Foto"
+
 [node name="RightPanel" type="VBoxContainer" parent="MainHBox"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
