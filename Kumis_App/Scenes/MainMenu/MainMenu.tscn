@@ -87,6 +87,18 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "🎭 Start Virtual Try-On"
 
+[node name="HowToUseButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonsPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(350, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "📖 How to Use"
+
+[node name="AboutButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonsPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(350, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "👥 Contributors"
+
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonsPanel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(350, 70)
 layout_mode = 2

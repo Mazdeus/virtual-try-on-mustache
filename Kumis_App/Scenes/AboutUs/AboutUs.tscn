@@ -1,0 +1,213 @@
+[gd_scene load_steps=6 format=3 uid="uid://cyxm8k7aboutus"]
+
+[ext_resource type="Script" path="res://Scenes/AboutUs/AboutUsController.gd" id="1_about"]
+[ext_resource type="Theme" uid="uid://ojrlaftklmmr" path="res://theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://Assets/Contributors/faisal.jpg" id="3_faisal"]
+[ext_resource type="Texture2D" path="res://Assets/Contributors/amadeus.png" id="4_amadeus"]
+[ext_resource type="Texture2D" path="res://Assets/Contributors/hasbi.jpg" id="5_hasbi"]
+
+[node name="AboutUs" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_about")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="TitlePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TitlePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TitlePanel/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 48
+text = "👥 Contributors"
+horizontal_alignment = 1
+
+[node name="TeamPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TeamPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 40
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 60
+alignment = 1
+
+[node name="Member1" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PhotoPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member1"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member1/PhotoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member1/PhotoPanel/MarginContainer"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+texture = ExtResource("3_faisal")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Faisal Bashri Albir"
+horizontal_alignment = 1
+
+[node name="NIMLabel" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 16
+text = "231524042"
+horizontal_alignment = 1
+
+[node name="Member2" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PhotoPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member2"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member2/PhotoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member2/PhotoPanel/MarginContainer"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+texture = ExtResource("4_amadeus")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Mohammad Amadeus"
+horizontal_alignment = 1
+
+[node name="NameLabel2" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Andika Fadhil"
+horizontal_alignment = 1
+
+[node name="NIMLabel" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 16
+text = "231524050"
+horizontal_alignment = 1
+
+[node name="Member3" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PhotoPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member3"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member3/PhotoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member3/PhotoPanel/MarginContainer"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+texture = ExtResource("5_hasbi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Muhammad Hasbi"
+horizontal_alignment = 1
+
+[node name="NameLabel2" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Asshidiqi"
+horizontal_alignment = 1
+
+[node name="NIMLabel" type="Label" parent="MarginContainer/VBoxContainer/TeamPanel/MarginContainer/HBoxContainer/Member3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 16
+text = "231524055"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -80.0
+offset_right = 180.0
+offset_bottom = -30.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+text = "◄ Kembali"

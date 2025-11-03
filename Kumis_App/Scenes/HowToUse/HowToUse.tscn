@@ -1,0 +1,354 @@
+[gd_scene load_steps=3 format=3 uid="uid://howtouse123456"]
+
+[ext_resource type="Script" path="res://Scenes/HowToUse/HowToUseController.gd" id="1_howto"]
+[ext_resource type="Theme" uid="uid://ojrlaftklmmr" path="res://theme.tres" id="2_theme"]
+
+[node name="HowToUse" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_howto")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TitlePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TitlePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 15
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TitlePanel/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 42
+text = "📖 How to Use"
+horizontal_alignment = 1
+
+[node name="StepsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/StepsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Step1" type="HBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StepPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step1"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step1/StepPanel"]
+layout_mode = 2
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step1/StepPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "1️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step1/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Jalankan Server"
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step1/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "Buka terminal dan jalankan: python udp_kumis_server.py --auto-detect"
+autowrap_mode = 3
+
+[node name="Step2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StepPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step2"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step2/StepPanel"]
+layout_mode = 2
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step2/StepPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "2️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step2/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Klik \"Start Virtual Try-On\""
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step2/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "Dari Main Menu, klik tombol 🎭 Start Virtual Try-On untuk membuka webcam"
+autowrap_mode = 3
+
+[node name="Step3" type="HBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StepPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step3"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step3/StepPanel"]
+layout_mode = 2
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step3/StepPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "3️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step3/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Pilih Style Kumis"
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step3/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "Klik tombol kumis di sebelah kanan untuk mencoba 13 style berbeda (Chevron, Style 1-12)"
+autowrap_mode = 3
+
+[node name="Step4" type="HBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StepPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step4"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step4/StepPanel"]
+layout_mode = 2
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step4/StepPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "4️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step4"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step4/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Ubah Warna Kumis 🎨"
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step4/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "Gunakan color picker di bawah pemilihan kumis untuk mengubah warna (Hitam, Coklat, Pirang, Merah, Abu-abu, Putih)"
+autowrap_mode = 3
+
+[node name="Step5" type="HBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StepPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step5"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step5/StepPanel"]
+layout_mode = 2
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step5/StepPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "5️⃣"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step5/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Ambil Foto 📸"
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/StepsPanel/MarginContainer/VBoxContainer/Step5/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "Klik tombol 📸 Ambil Foto untuk menyimpan screenshot. Foto tersimpan di folder screenshots/"
+autowrap_mode = 3
+
+[node name="TipsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/TipsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "💡 Tips untuk Hasil Terbaik:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="Column1" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Tip1" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer/Column1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "✓ Pastikan wajah menghadap kamera"
+autowrap_mode = 3
+
+[node name="Tip2" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer/Column1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "✓ Gunakan pencahayaan yang cukup"
+autowrap_mode = 3
+
+[node name="Tip3" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer/Column1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "✓ Jaga jarak 30-50 cm dari kamera"
+autowrap_mode = 3
+
+[node name="Column2" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Tip4" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer/Column2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "✓ Hindari background yang ramai"
+autowrap_mode = 3
+
+[node name="Tip5" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer/Column2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "✓ Tekan Space untuk toggle kumis on/off"
+autowrap_mode = 3
+
+[node name="Tip6" type="Label" parent="MarginContainer/VBoxContainer/TipsPanel/MarginContainer/VBoxContainer/HBoxContainer/Column2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 15
+text = "✓ Tekan Esc untuk kembali ke menu"
+autowrap_mode = 3
+
+[node name="BottomPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TryNowButton" type="Button" parent="MarginContainer/VBoxContainer/BottomPanel"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "🚀 Coba Sekarang!"
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -80.0
+offset_right = 180.0
+offset_bottom = -30.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+text = "◄ Kembali"

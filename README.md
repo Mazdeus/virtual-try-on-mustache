@@ -19,6 +19,8 @@ Aplikasi Virtual Try-On untuk berbagai style kumis menggunakan **Machine Learnin
 - ✅ **12 Style Kumis** - Berbagai gaya kumis dari klasik hingga modern
 - ✅ **6 Preset Warna** - Black, Brown, Blonde, Red, Gray, White + custom HSV
 - ✅ **Screenshot Feature** - Simpan foto hasil try-on dengan popup notification
+- ✅ **Interactive Tutorial** - Step-by-step guide dengan animasi interaktif
+- ✅ **Contributors Page** - Informasi tim pengembang dengan foto
 - ✅ **Real-time Detection** - Face detection dengan SVM+ORB (50-60ms inference)
 - ✅ **Smart Validation** - 6-layer pipeline (Haar + SVM + Eye Detection)
 - ✅ **Rotation Support** - Kumis ikut rotasi saat kepala miring (angle smoothing)
@@ -81,6 +83,14 @@ virtual-try-on-mustache/
     │   │   ├── MainMenu.tscn        # Main menu UI
     │   │   └── MainMenuController.gd
     │   │
+    │   ├── HowToUse/
+    │   │   ├── HowToUse.tscn        # Interactive tutorial scene
+    │   │   └── HowToUseController.gd # Step-by-step animation
+    │   │
+    │   ├── AboutUs/
+    │   │   ├── AboutUs.tscn         # Contributors page
+    │   │   └── AboutUsController.gd  # Team info display
+    │   │
     │   └── Kumis/           # Main app scenes
     │       ├── KumisSelectionScene.tscn    # Kumis selection (grid 12 styles)
     │       ├── KumisSelectionController.gd  # Selection logic + sorting
@@ -88,8 +98,13 @@ virtual-try-on-mustache/
     │       ├── KumisWebcamController.gd    # UDP client + controls
     │       └── WebcamManagerUDP.gd         # UDP networking
     │
-    └── Assets/Kumis/                 # Kumis preview images
-        └── kumis_1.png ... kumis_12.png
+    └── Assets/
+        ├── Kumis/                    # Kumis preview images
+        │   └── kumis_1.png ... kumis_12.png
+        └── Contributors/             # Team member photos
+            ├── faisal.jpg
+            ├── amadeus.png
+            └── hasbi.jpg
 ```
 
 ---
@@ -358,9 +373,10 @@ cd Kumis_App
 ```
 ┌─────────────────────────────────┐
 │       MAIN MENU                 │
-│  [🎯 Mulai Try-On]             │  ← Click ini
-│  [ℹ️ Tentang]                   │
-│  [❌ Keluar]                     │
+│  [� Start Virtual Try-On]     │  ← Click untuk mulai
+│  [📖 How to Use]               │  ← Tutorial interaktif
+│  [👥 Contributors]             │  ← Info tim pengembang
+│  [❌ Quit]                      │
 └─────────────────────────────────┘
          ↓
 ┌─────────────────────────────────────────┐
@@ -416,6 +432,22 @@ cd Kumis_App
 ---
 
 ## 📸 Contoh Penggunaan
+
+### Mode Tutorial (How to Use)
+```
+Interactive step-by-step guide dengan animasi:
+Step 1: Jalankan Server (dengan animasi highlight)
+Step 2: Klik Start Virtual Try-On
+Step 3: Pilih Style Kumis (13 pilihan)
+Step 4: Ubah Warna Kumis (6 preset colors)
+Step 5: Ambil Foto (screenshot feature)
+
+Tips & Tricks:
+- Pencahayaan yang baik
+- Wajah menghadap kamera
+- Jarak optimal 30-50cm
+- Keyboard shortcuts cheatsheet
+```
 
 ### Mode Normal (Frontal Face)
 ```
@@ -487,6 +519,7 @@ taskkill /PID <PID> /F          # Kill process
 - ✅ Check Python console: "Face detected" messages
 - ✅ Improve lighting (face camera directly)
 - ✅ Check file exists: `Kumis_Server/assets/kumis/kumis_X.png`
+- ✅ Baca tutorial: Main Menu → "📖 How to Use"
 
 **Screenshot tidak tersimpan**
 - ✅ Check folder exists: `Kumis_Server/screenshots/`
@@ -527,9 +560,14 @@ Kumis_Server/reports/benchmark_official.json
 ## 📝 Credits
 
 **Developed by:**
-- **Faisal**
-- **Amadeus**
-- **Hasbi**
+- **Faisal Bashri Albir** (231524042)
+- **Mohammad Amadeus Andika Fadhil** (231524050)
+- **Muhammad Hasbi Asshidiqi** (231524055)
+
+**Course:**
+- Pengolahan Citra Digital
+- Politeknik Negeri Bandung
+- 2025
 
 **Technologies:**
 - Godot Engine 4.x, OpenCV, Scikit-learn, NumPy
@@ -540,6 +578,13 @@ Kumis_Server/reports/benchmark_official.json
 ---
 
 ## 🎉 Version History
+
+- **v2.2.0** (November 2025) - UI/UX Enhancement
+  - 📖 Interactive Tutorial: Step-by-step guide dengan animasi
+  - 👥 Contributors Page: Team info dengan foto dan NIM
+  - 🎨 Improved Main Menu: 4 tombol navigasi
+  - ✨ Animated step highlighting (0.8s cycle)
+  - 🚀 "Try Now" quick action dari tutorial
 
 - **v2.1.0** (November 2025) - Feature Expansion
   - ✨ Color Picker: 6 preset colors + custom HSV
