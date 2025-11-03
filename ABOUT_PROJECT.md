@@ -1223,22 +1223,17 @@ Filter-Face-Godot-Ver-main/
    - Compare accuracy/latency/resource usage
    - Document tradeoffs
 
-7. **3D Kumis**
-   - Use 3D models instead of 2D PNGs
-   - More realistic (lighting, depth)
-   - ARCore/ARKit integration
-
-8. **Multi-Face Support**
+7. **Multi-Face Support**
    - Overlay on all detected faces
    - Useful for group photos
    - Performance optimization required
 
-9. **Custom Kumis Designer**
+8. **Custom Kumis Designer**
    - In-app tool to create new styles
    - Adjust color, thickness, curve
    - Save and share
 
-10. **Social Features**
+9. **Social Features**
     - Share screenshots to social media
     - Kumis style voting/rating
     - User-generated styles gallery
@@ -1259,7 +1254,6 @@ Filter-Face-Godot-Ver-main/
 
 13. **Augmented Reality**
     - Full AR mode (not just overlay)
-    - 3D scene integration
     - Virtual lighting
 
 14. **Video Mode**
@@ -1434,7 +1428,7 @@ This project serves as:
 - 🔬 **Research platform** for algorithm development
 
 **Future of the Project:**
-The architecture is designed for extensibility. Whether adding more kumis styles, implementing 3D models, or upgrading to deep learning, the modular design ensures smooth evolution.
+The architecture is designed for extensibility. Whether adding more kumis styles, or upgrading to deep learning, the modular design ensures smooth evolution.
 
 ---
 

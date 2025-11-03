@@ -280,4 +280,7 @@ class KumisOverlay:
         dy = eye2[1] - eye1[1]
         angle = np.degrees(np.arctan2(dy, dx))
         
-        return angle
+        # Negate angle to fix inverted rotation
+        # When right eye is higher (dy < 0), head tilts right, kumis should tilt right too
+        return -angle
+

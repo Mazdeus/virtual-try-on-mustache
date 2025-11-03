@@ -139,6 +139,9 @@ def generate_negatives_from_images(image_dir, output_dir, count=1000):
         image_files.extend(image_path.glob(ext))
         image_files.extend(image_path.glob(ext.upper()))
     
+    # Remove duplicates (Windows is case-insensitive)
+    image_files = list(set(image_files))
+    
     if len(image_files) == 0:
         print(f"No images found in {image_dir}")
         return

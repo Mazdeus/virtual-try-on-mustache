@@ -124,6 +124,12 @@ def command_train(args):
     with open('reports/training_results.json', 'w') as f:
         json.dump(config, f, indent=2)
     
+    # Plot and save confusion matrix
+    if 'confusion_matrix' in test_metrics:
+        import numpy as np
+        cm = np.array(test_metrics['confusion_matrix'])
+        plot_confusion_matrix(cm, 'reports/confusion_matrix.png')
+    
     print(f"\n✅ Training complete!")
     print(f"  Models saved to: {args.output_dir}")
     print(f"  Test F1 Score: {test_metrics['f1_score']:.3f}")

@@ -28,13 +28,14 @@ Aplikasi Virtual Try-On untuk berbagai style kumis menggunakan **Machine Learnin
 
 | Metric | Value | Note |
 |--------|-------|------|
-| **Accuracy** | 83.8% | Test set: 160 images |
-| **Precision** | 84.7% | Low false positives |
-| **Recall** | 82.5% | Good detection rate |
-| **F1-Score** | 83.6% | Balanced performance |
+| **Accuracy** | 78.2% | Test set: 900 images (balanced) |
+| **Precision** | 77.1% | Low false positives |
+| **Recall** | 80.2% | Good detection rate |
+| **F1-Score** | 78.6% | Balanced performance |
+| **ROC AUC** | 88.0% | Excellent discrimination |
+| **Training Data** | 6000 images | 3000 faces + 3000 non-faces |
 | **Inference Time** | 50-60ms | Real-time @ 15+ FPS |
-| **False Positive Reduction** | 90% | Eye detection mandatory |
-| **Flickering Reduction** | 95% | Temporal smoothing |
+| **Rotation Support** | ✅ Yes | Multi-angle face detection |
 
 ---
 
@@ -232,9 +233,17 @@ Output: Frame with kumis overlay
 
 ---
 
-## 🚀 Cara Menjalankan
+## 🚀 Cara Menjalankan Program (Setelah Training)
 
-### 1. Install Dependencies
+### Prerequisites
+- ✅ **Python 3.8+** sudah terinstall
+- ✅ **Model sudah di-train** (file `.pkl` ada di folder `models/`)
+- ✅ **Webcam tersedia** dan berfungsi
+- ✅ **Godot 4.x** sudah terinstall
+
+---
+
+### 1. Install Dependencies (Jika Belum)
 
 ```powershell
 # Clone repository
@@ -246,10 +255,33 @@ cd Kumis_Server
 pip install -r requirements.txt
 
 # Verify installation
-python -c "import cv2, numpy, sklearn; print('✅ OK')"
+python -c "import cv2, numpy, sklearn; print('✅ Dependencies OK')"
 ```
 
-### 2. Run Python Server
+---
+
+### 2. Verifikasi Model Sudah Ada
+
+```powershell
+# Check jika model files ada (harus ada 4 file)
+cd Kumis_Server
+ls models
+
+# Output yang diharapkan:
+# - codebook.pkl    (~800KB)
+# - config.json     (~800B)
+# - scaler.pkl      (~5KB)
+# - svm.pkl         (~2KB)
+```
+
+**Jika model belum ada, jalankan training:**
+```powershell
+python app.py train --pos_dir data/faces --neg_dir data/non_faces --output_dir models --k 200 --nfeatures 500
+```
+
+---
+
+### 3. Run Python Server (Backend)
 
 ```powershell
 cd Kumis_Server
@@ -258,11 +290,25 @@ python udp_kumis_server.py
 
 **Expected Output:**
 ```
-✅ Loaded SVM model: models/svm_model.pkl
-✅ Camera initialized: DirectShow (640×480 @ 15 FPS)
-🚀 UDP Server started: 127.0.0.1:8888
-⏳ Waiting for client connections...
+🚀 Virtual Try-On Kumis - UDP Server
+════════════════════════════════════════
+
+📦 Loading models...
+  ✅ SVM loaded: models/svm.pkl
+  ✅ Scaler loaded: models/scaler.pkl
+  ✅ Codebook loaded: models/codebook.pkl
+  ✅ Config loaded: models/config.json
+
+📷 Initializing camera...
+  ✅ Camera opened: Device 0 (640×480)
+
+🌐 Starting UDP server...
+  ✅ Server listening on: 127.0.0.1:8888
+  
+⏳ Waiting for client connection...
 ```
+
+**Jangan close terminal ini!** Server harus tetap running.
 
 **Troubleshooting Webcam:**
 ```powershell
@@ -271,30 +317,116 @@ python udp_kumis_server.py --camera 1        # Use specific camera
 python udp_kumis_server.py --auto-detect     # Auto-detect best camera
 ```
 
-### 3. Run Godot Client
+---
 
-1. **Download Godot 4.x** dari https://godotengine.org/download
+### 4. Run Godot Client (Frontend)
+
+#### **Cara 1: Via Godot Editor (Development Mode)**
+
+1. **Download Godot 4.x** dari https://godotengine.org/download (jika belum punya)
+
 2. **Open Godot** → Click **"Import"**
-3. **Browse** ke folder `Kumis_App` → Pilih `project.godot`
-4. **Click "Import & Edit"**
-5. **Press F5** (atau klik tombol Play ▶️)
 
-### 4. Gunakan Aplikasi
+3. **Browse** ke folder `Kumis_App` → Pilih `project.godot` → Click **"Import & Edit"**
+
+4. **Press F5** (atau klik tombol Play ▶️ di toolbar)
+
+5. Aplikasi akan terbuka di window baru
+
+---
+
+#### **Cara 2: Via Exported Executable (Production Mode)**
+
+Jika ada file `.exe` yang sudah di-export:
+
+```powershell
+cd Kumis_App
+./KumisTryOn.exe    # Double-click atau run via terminal
+```
+
+---
+
+### 5. Gunakan Aplikasi
 
 ```
-Main Menu → Klik "🎯 Mulai Try-On"
-  ↓
-Kumis Selection (grid 12 styles) → Klik salah satu kumis
-  ↓
-Klik "✓ Pilih Kumis"
-  ↓
-Webcam Scene (kumis overlay real-time)
+┌─────────────────────────────────┐
+│       MAIN MENU                 │
+│  [🎯 Mulai Try-On]             │  ← Click ini
+│  [ℹ️ Tentang]                   │
+│  [❌ Keluar]                     │
+└─────────────────────────────────┘
+         ↓
+┌─────────────────────────────────┐
+│    KUMIS SELECTION              │
+│  ┌───┬───┬───┬───┐             │
+│  │ 1 │ 2 │ 3 │ 4 │             │  ← Click salah satu kumis
+│  ├───┼───┼───┼───┤             │
+│  │ 5 │ 6 │ 7 │ 8 │             │
+│  ├───┼───┼───┼───┤             │
+│  │ 9 │10 │11 │12 │             │
+│  └───┴───┴───┴───┘             │
+│                                 │
+│  [✓ Pilih Kumis]  [← Kembali]  │  ← Click "Pilih Kumis"
+└─────────────────────────────────┘
+         ↓
+┌─────────────────────────────────┐
+│    WEBCAM DISPLAY               │
+│  ┌─────────────────────────┐   │
+│  │                         │   │
+│  │   [Live Video Feed]     │   │  ← Kumis overlay real-time!
+│  │   dengan kumis overlay  │   │
+│  │                         │   │
+│  └─────────────────────────┘   │
+│                                 │
+│  Spacebar: Toggle ON/OFF        │
+│  ESC: Fullscreen                │
+│  Q: Quit                        │
+└─────────────────────────────────┘
 ```
 
-**Controls:**
-- **Spacebar**: Toggle kumis ON/OFF
-- **ESC**: Toggle fullscreen/windowed
-- **Q**: Quit aplikasi
+---
+
+### 6. Keyboard Controls
+
+| Key | Action | Keterangan |
+|-----|--------|------------|
+| **Spacebar** | Toggle kumis ON/OFF | Menyembunyikan/menampilkan kumis |
+| **ESC** | Toggle fullscreen | Fullscreen ↔ Windowed |
+| **Q** | Quit aplikasi | Keluar dari aplikasi |
+| **← (Back button)** | Kembali ke menu | Di scene Selection/Webcam |
+
+---
+
+### 7. Tips untuk Hasil Terbaik
+
+✅ **Lighting**: Pencahayaan yang baik (hindari backlight)  
+✅ **Position**: Wajah menghadap kamera secara frontal  
+✅ **Distance**: Jarak 50-100cm dari kamera  
+✅ **Rotation**: Model support wajah rotasi, kumis akan ikut berputar!  
+✅ **Stability**: Hindari gerakan terlalu cepat (untuk mengurangi jitter)
+
+---
+
+## 📸 Contoh Penggunaan
+
+### Mode Normal (Frontal Face)
+```
+Wajah terdeteksi → Kumis ditempel di posisi yang sesuai
+Wajah tidak terdeteksi → Kumis hilang (no false positives!)
+```
+
+### Mode Rotasi (Tilted Face)
+```
+Wajah miring ke kanan → Kumis ikut berputar ke kanan (smooth rotation)
+Wajah miring ke kiri → Kumis ikut berputar ke kiri
+Sudut rotasi: -45° hingga +45° (angle smoothing applied)
+```
+
+### Mode Toggle
+```
+Spacebar ON: Kumis ditampilkan (overlay aktif)
+Spacebar OFF: Kumis disembunyikan (hanya face detection)
+```
 
 ---
 

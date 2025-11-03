@@ -46,6 +46,9 @@ class FaceDataset:
             image_files.extend(pos_path.glob(ext))
             image_files.extend(pos_path.glob(ext.upper()))
         
+        # Remove duplicates (Windows is case-insensitive)
+        image_files = list(set(image_files))
+        
         print(f"Loading positive samples from {pos_dir}...")
         for img_file in image_files:
             img = cv2.imread(str(img_file), cv2.IMREAD_GRAYSCALE)
@@ -67,6 +70,9 @@ class FaceDataset:
         for ext in extensions:
             image_files.extend(neg_path.glob(ext))
             image_files.extend(neg_path.glob(ext.upper()))
+        
+        # Remove duplicates (Windows is case-insensitive)
+        image_files = list(set(image_files))
         
         print(f"Loading negative samples from {neg_dir}...")
         for img_file in image_files:
