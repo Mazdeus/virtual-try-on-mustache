@@ -351,6 +351,24 @@ class UDPKumisServer:
                         kumis_file = parts[1]
                         self._set_kumis(kumis_file)
                 
+                elif cmd == 'SELECT_KUMIS' or cmd.startswith('SELECT_KUMIS:'):
+                    # Handle SELECT_KUMIS:1 format
+                    kumis_index = None
+                    if ':' in message:
+                        try:
+                            kumis_index = int(message.split(':')[1])
+                        except:
+                            pass
+                    elif len(parts) > 1:
+                        try:
+                            kumis_index = int(parts[1])
+                        except:
+                            pass
+                    
+                    if kumis_index is not None:
+                        kumis_file = f"kumis_{kumis_index}.png"
+                        self._set_kumis(kumis_file)
+                
                 elif cmd == 'TOGGLE_KUMIS':
                     # Toggle kumis on/off
                     self.show_kumis = not self.show_kumis

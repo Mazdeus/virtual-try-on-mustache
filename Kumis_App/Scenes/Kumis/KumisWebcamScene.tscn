@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c7rl2ilwsvgik"]
+[gd_scene load_steps=4 format=3 uid="uid://c7rl2ilwsvgik"]
 
 [ext_resource type="Script" uid="uid://dkvhca1hel7uf" path="res://Scenes/Kumis/KumisWebcamController.gd" id="1"]
 [ext_resource type="Script" uid="uid://bprorri75p3un" path="res://Scenes/Kumis/WebcamManagerUDP.gd" id="2"]
+[ext_resource type="Theme" path="res://theme.tres" id="3"]
 
 [node name="KumisWebcamScene" type="Control"]
 layout_mode = 3
@@ -10,50 +11,135 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3")
 script = ExtResource("1")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.12, 0.12, 0.12, 1)
 
-[node name="StatusContainer" type="HBoxContainer" parent="MainContainer"]
-layout_mode = 2
+[node name="MainHBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
 
-[node name="StatusLabel" type="Label" parent="MainContainer/StatusContainer"]
+[node name="LeftPanel" type="VBoxContainer" parent="MainHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Connecting..."
+size_flags_stretch_ratio = 2.0
+theme_override_constants/separation = 15
 
-[node name="FPSLabel" type="Label" parent="MainContainer/StatusContainer"]
+[node name="HeaderPanel" type="PanelContainer" parent="MainHBox/LeftPanel"]
 layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainHBox/LeftPanel/HeaderPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainHBox/LeftPanel/HeaderPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="MainHBox/LeftPanel/HeaderPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "● Connecting..."
+
+[node name="FPSLabel" type="Label" parent="MainHBox/LeftPanel/HeaderPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "FPS: 0"
 
-[node name="WebcamContainer" type="CenterContainer" parent="MainContainer"]
+[node name="WebcamPanel" type="PanelContainer" parent="MainHBox/LeftPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="WebcamDisplay" type="TextureRect" parent="MainContainer/WebcamContainer"]
-custom_minimum_size = Vector2(960, 720)
+[node name="WebcamDisplay" type="TextureRect" parent="MainHBox/LeftPanel/WebcamPanel"]
+custom_minimum_size = Vector2(800, 600)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ControlContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="ControlPanel" type="PanelContainer" parent="MainHBox/LeftPanel"]
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="MainContainer/ControlContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MainHBox/LeftPanel/ControlPanel"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Kembali"
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 15
 
-[node name="ToggleKumisButton" type="Button" parent="MainContainer/ControlContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainHBox/LeftPanel/ControlPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="BackButton" type="Button" parent="MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Sembunyikan Kumis"
+theme_override_font_sizes/font_size = 18
+text = "← Kembali"
+
+[node name="ToggleKumisButton" type="Button" parent="MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "👁 Sembunyikan Kumis"
+
+[node name="RightPanel" type="VBoxContainer" parent="MainHBox"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="TitlePanel" type="PanelContainer" parent="MainHBox/RightPanel"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainHBox/RightPanel/TitlePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 15
+
+[node name="Label" type="Label" parent="MainHBox/RightPanel/TitlePanel/MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Pilih Kumis"
+horizontal_alignment = 1
+
+[node name="KumisScrollContainer" type="ScrollContainer" parent="MainHBox/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="KumisGridContainer" type="GridContainer" parent="MainHBox/RightPanel/KumisScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
 
 [node name="WebcamManagerUDP" type="Node" parent="."]
 script = ExtResource("2")
+

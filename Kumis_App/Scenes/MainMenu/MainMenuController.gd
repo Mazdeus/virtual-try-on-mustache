@@ -1,7 +1,7 @@
 extends Control
 
-@onready var try_on_button = $CenterContainer/VBoxContainer/TryOnButton
-@onready var quit_button = $CenterContainer/VBoxContainer/QuitButton
+@onready var try_on_button = $CenterContainer/VBoxContainer/ButtonsPanel/MarginContainer/VBoxContainer/TryOnButton
+@onready var quit_button = $CenterContainer/VBoxContainer/ButtonsPanel/MarginContainer/VBoxContainer/QuitButton
 
 func _ready():
 	print("=== MainMenu._ready() ===")
@@ -21,12 +21,11 @@ func _ready():
 		print("❌ Quit button not found!")
 
 func _on_try_on_button_pressed():
-	"""Navigate to Kumis Selection scene"""
-	print("Try On button pressed - going to Kumis Selection")
-	get_tree().change_scene_to_file("res://Scenes/Kumis/KumisSelectionScene.tscn")
+	"""Navigate directly to Webcam scene"""
+	print("Try On button pressed - going to Webcam")
+	get_tree().change_scene_to_file("res://Scenes/Kumis/KumisWebcamScene.tscn")
 
 func _on_quit_button_pressed():
 	"""Quit the application"""
 	print("Quit button pressed - exiting application")
 	get_tree().quit()
-
