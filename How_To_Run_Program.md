@@ -1,5 +1,7 @@
 ## 🚀 Cara Menjalankan Program (Setelah Training)
 
+**Karena pengumpulan maksimum file sizenya untuk Source Code Sistem hanya 100MB jadi saya kosongkan folder Kumis_Server\data. Dan dipisah pada pengumpulan "Dataset yang Digunakan"**
+
 ### Prerequisites
 - ✅ **Python 3.8+** sudah terinstall
 - ✅ **Model sudah di-train** (file `.pkl` ada di folder `models/`)
@@ -46,6 +48,7 @@ python app.py train --pos_dir data/faces --neg_dir data/non_faces --output_dir m
 
 ---
 
+**Karena model sudah ada dan sudah di training, bisa lanjut menjalankan server dan client**
 ### 3. Run Python Server (Backend)
 
 ```powershell
