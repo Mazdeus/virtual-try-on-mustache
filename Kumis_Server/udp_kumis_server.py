@@ -375,6 +375,18 @@ class UDPKumisServer:
                     status = "ON" if self.show_kumis else "OFF"
                     print(f"  🎭 Kumis overlay: {status}")
                 
+                elif cmd == 'COLOR' or cmd.startswith('COLOR:'):
+                    # Handle COLOR:preset_name or COLOR:H,S,V format
+                    # Presets: BLACK, BROWN, BLONDE, RED, GRAY, WHITE, RESET
+                    color_param = None
+                    if ':' in message:
+                        color_param = message.split(':', 1)[1].strip()
+                    elif len(parts) > 1:
+                        color_param = ' '.join(parts[1:]).strip()
+                    
+                    if color_param:
+                        self._set_kumis_color(color_param)
+                
                 elif cmd == 'DISCONNECT':
                     # Remove client
                     if addr in self.clients:
@@ -531,6 +543,45 @@ class UDPKumisServer:
             print(f"  �🎭 Kumis set to: {kumis_file}")
         except Exception as e:
             print(f"  ❌ Error loading kumis: {e}")
+    
+    def _set_kumis_color(self, color_param):
+        """Set kumis color using preset or custom HSV values."""
+        if self.kumis_overlay is None:
+            print(f"  ⚠️ No kumis loaded, cannot set color")
+            return
+        
+        # Color presets (OpenCV HSV range: H=0-179, S=0-255, V=0-255)
+        presets = {
+            'BLACK': (None, None, 40),      # Dark
+            'BROWN': (10, 180, 80),         # Brown
+            'BLONDE': (25, 120, 180),       # Light brown/blonde
+            'RED': (0, 200, 150),           # Reddish
+            'GRAY': (None, 30, 120),        # Low saturation gray
+            'WHITE': (None, 20, 220),       # Very light
+            'RESET': (None, None, None)     # Reset to original
+        }
+        
+        try:
+            color_upper = color_param.upper()
+            
+            if color_upper in presets:
+                # Use preset
+                h, s, v = presets[color_upper]
+                self.kumis_overlay.set_color(h, s, v)
+                print(f"  🎨 Kumis color: {color_upper}")
+            else:
+                # Try to parse custom HSV values (format: "H,S,V")
+                parts = color_param.split(',')
+                if len(parts) == 3:
+                    h = int(parts[0]) if parts[0].strip() else None
+                    s = int(parts[1]) if parts[1].strip() else None
+                    v = int(parts[2]) if parts[2].strip() else None
+                    self.kumis_overlay.set_color(h, s, v)
+                    print(f"  🎨 Custom color: H={h}, S={s}, V={v}")
+                else:
+                    print(f"  ⚠️ Invalid color format: {color_param}")
+        except Exception as e:
+            print(f"  ❌ Error setting color: {e}")
 
 
 def main():

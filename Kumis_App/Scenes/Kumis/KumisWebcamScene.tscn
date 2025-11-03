@@ -140,6 +140,33 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 2
 
+[node name="ColorPanel" type="PanelContainer" parent="MainHBox/RightPanel"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainHBox/RightPanel/ColorPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainHBox/RightPanel/ColorPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MainHBox/RightPanel/ColorPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "🎨 Warna Kumis"
+horizontal_alignment = 1
+
+[node name="ColorGrid" type="GridContainer" parent="MainHBox/RightPanel/ColorPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
 [node name="WebcamManagerUDP" type="Node" parent="."]
 script = ExtResource("2")
+
 

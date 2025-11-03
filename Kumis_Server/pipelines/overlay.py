@@ -19,6 +19,8 @@ class KumisOverlay:
             kumis_path: Path to kumis PNG file (with alpha channel)
         """
         self.kumis_img = None
+        self.kumis_img_original = None  # Store original for colorization
+        self.current_color = None  # Current HSV color (H, S, V)
         self.last_angle = 0.0  # For angle smoothing
         self.angle_smooth_factor = 0.4  # 40% new angle, 60% old angle
         if kumis_path:
@@ -43,6 +45,10 @@ class KumisOverlay:
             h, w = self.kumis_img.shape[:2]
             alpha = np.ones((h, w, 1), dtype=self.kumis_img.dtype) * 255
             self.kumis_img = np.concatenate([self.kumis_img, alpha], axis=2)
+        
+        # Store original for colorization
+        self.kumis_img_original = self.kumis_img.copy()
+        self.current_color = None  # Reset color
         
         print(f"  🎨 Kumis loaded: {kumis_path}")
     
@@ -283,4 +289,58 @@ class KumisOverlay:
         # Negate angle to fix inverted rotation
         # When right eye is higher (dy < 0), head tilts right, kumis should tilt right too
         return -angle
+    
+    def set_color(self, hue=None, saturation=None, value=None):
+        """
+        Colorize kumis with HSV color.
+        
+        Args:
+            hue: Hue value (0-179 in OpenCV HSV)
+            saturation: Saturation value (0-255)
+            value: Value/brightness (0-255)
+        """
+        if hue is None and saturation is None and value is None:
+            # Reset to original
+            self.kumis_img = self.kumis_img_original.copy()
+            self.current_color = None
+            print("  🎨 Color reset to original")
+            return
+        
+        # Store color
+        self.current_color = (hue, saturation, value)
+        
+        # Get original kumis
+        original = self.kumis_img_original.copy()
+        
+        # Separate BGR and Alpha
+        bgr = original[:, :, :3]
+        alpha = original[:, :, 3]
+        
+        # Convert to HSV
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV).astype(np.float32)
+        
+        # Apply colorization (only to dark pixels - the mustache)
+        # Create mask for dark pixels (the mustache is black/dark)
+        gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+        dark_mask = gray < 50  # Dark pixels
+        
+        if hue is not None:
+            hsv[:, :, 0] = np.where(dark_mask, hue, hsv[:, :, 0])
+        
+        if saturation is not None:
+            hsv[:, :, 1] = np.where(dark_mask, saturation, hsv[:, :, 1])
+        
+        if value is not None:
+            # Adjust brightness for dark pixels
+            hsv[:, :, 2] = np.where(dark_mask, value, hsv[:, :, 2])
+        
+        # Convert back to BGR
+        hsv = np.clip(hsv, [0, 0, 0], [179, 255, 255]).astype(np.uint8)
+        colored_bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+        
+        # Recombine with alpha
+        self.kumis_img = np.dstack([colored_bgr, alpha])
+        
+        print(f"  🎨 Color applied: H={hue}, S={saturation}, V={value}")
+
 

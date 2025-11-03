@@ -7,6 +7,7 @@ extends Control
 @onready var toggle_kumis_button = $MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer/ToggleKumisButton
 @onready var back_button = $MainHBox/LeftPanel/ControlPanel/MarginContainer/HBoxContainer/BackButton
 @onready var kumis_grid = $MainHBox/RightPanel/KumisScrollContainer/KumisGridContainer
+@onready var color_grid = $MainHBox/RightPanel/ColorPanel/MarginContainer/VBoxContainer/ColorGrid
 
 @onready var webcam_manager = $WebcamManagerUDP
 
@@ -14,6 +15,7 @@ var kumis_enabled: bool = true
 var frame_count: int = 0
 var fps_timer: float = 0.0
 var current_kumis_index: int = 1  # Default kumis_1
+var current_color: String = "BLACK"  # Default color
 
 # List of available kumis
 var kumis_list = [
@@ -48,6 +50,9 @@ func _ready():
 	
 	# Initialize kumis selection grid
 	_populate_kumis_grid()
+	
+	# Initialize color picker
+	_populate_color_picker()
 	
 	# Initialize
 	status_label.text = "● Connecting..."
@@ -108,6 +113,80 @@ func _populate_kumis_grid():
 			_highlight_kumis_button(button_container)
 	
 	print("Created %d kumis selection buttons" % kumis_list.size())
+
+
+func _populate_color_picker():
+	"""Create color selection buttons"""
+	var colors = [
+		{"name": "Hitam", "preset": "BLACK", "color": Color(0.1, 0.1, 0.1)},
+		{"name": "Coklat", "preset": "BROWN", "color": Color(0.4, 0.25, 0.15)},
+		{"name": "Pirang", "preset": "BLONDE", "color": Color(0.8, 0.65, 0.4)},
+		{"name": "Merah", "preset": "RED", "color": Color(0.6, 0.2, 0.1)},
+		{"name": "Abu", "preset": "GRAY", "color": Color(0.5, 0.5, 0.5)},
+		{"name": "Putih", "preset": "WHITE", "color": Color(0.9, 0.9, 0.9)}
+	]
+	
+	for color_data in colors:
+		var button = Button.new()
+		button.custom_minimum_size = Vector2(110, 45)
+		button.text = color_data["name"]
+		
+		# Set button background color
+		var style_box = StyleBoxFlat.new()
+		style_box.bg_color = color_data["color"]
+		style_box.border_width_left = 2
+		style_box.border_width_right = 2
+		style_box.border_width_top = 2
+		style_box.border_width_bottom = 2
+		style_box.border_color = Color(0.6, 0.6, 0.6, 1.0)
+		style_box.corner_radius_top_left = 8
+		style_box.corner_radius_top_right = 8
+		style_box.corner_radius_bottom_left = 8
+		style_box.corner_radius_bottom_right = 8
+		button.add_theme_stylebox_override("normal", style_box)
+		
+		# Hover effect
+		var style_box_hover = style_box.duplicate()
+		style_box_hover.border_color = Color(1.0, 1.0, 1.0, 1.0)
+		style_box_hover.border_width_left = 3
+		style_box_hover.border_width_right = 3
+		style_box_hover.border_width_top = 3
+		style_box_hover.border_width_bottom = 3
+		button.add_theme_stylebox_override("hover", style_box_hover)
+		
+		# Pressed effect
+		var style_box_pressed = style_box.duplicate()
+		style_box_pressed.border_color = Color(0.3, 0.6, 1.0, 1.0)
+		style_box_pressed.border_width_left = 4
+		style_box_pressed.border_width_right = 4
+		style_box_pressed.border_width_top = 4
+		style_box_pressed.border_width_bottom = 4
+		button.add_theme_stylebox_override("pressed", style_box_pressed)
+		
+		# Text color for contrast
+		if color_data["color"].v > 0.5:  # Light background
+			button.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
+			button.add_theme_color_override("font_hover_color", Color(0.0, 0.0, 0.0))
+		else:  # Dark background
+			button.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
+			button.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 1.0))
+		
+		color_grid.add_child(button)
+		
+		# Connect button
+		var preset = color_data["preset"]
+		button.pressed.connect(func(): _on_color_selected(preset))
+	
+	print("Created %d color buttons" % colors.size())
+
+
+func _on_color_selected(preset: String):
+	"""Handle color selection"""
+	print("Selected color:", preset)
+	current_color = preset
+	
+	# Send command to server
+	send_command_to_server("COLOR:%s" % preset)
 
 
 func _on_kumis_selected(kumis_index: int, button_container: PanelContainer):
@@ -243,4 +322,3 @@ func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
 		if webcam_manager:
 			webcam_manager.disconnect_from_server()
-
