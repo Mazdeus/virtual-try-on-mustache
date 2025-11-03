@@ -18,6 +18,10 @@ var fps_timer: float = 0.0
 var current_kumis_index: int = 1  # Default kumis_1
 var current_color: String = "BLACK"  # Default color
 
+# UDP for receiving responses
+var response_udp: PacketPeerUDP = null
+var response_port: int = 7777  # Dedicated port for responses
+
 # List of available kumis
 var kumis_list = [
 	{"name": "Kumis 1", "index": 1, "image": "res://Assets/Kumis/kumis_1.png"},
@@ -39,6 +43,9 @@ func _ready():
 	
 	# Enable fullscreen mode
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	
+	# Setup UDP listener for responses
+	_setup_response_listener()
 	
 	# Connect WebcamManager signals
 	webcam_manager.frame_received.connect(_on_frame_received)
@@ -66,6 +73,16 @@ func _ready():
 	send_command_to_server("SELECT_KUMIS:%d" % current_kumis_index)
 	
 	print("Kumis webcam scene initialized (FULLSCREEN mode)")
+
+
+func _setup_response_listener():
+	"""Setup UDP listener for server responses"""
+	response_udp = PacketPeerUDP.new()
+	var err = response_udp.bind(response_port)
+	if err != OK:
+		print("⚠️ Failed to bind response UDP port:", response_port)
+	else:
+		print("✅ Response listener bound to port:", response_port)
 
 
 func _populate_kumis_grid():
@@ -246,6 +263,12 @@ func _process(delta):
 		frame_count = 0
 		fps_timer = 0.0
 	
+	# Check for server responses
+	if response_udp and response_udp.get_available_packet_count() > 0:
+		var packet = response_udp.get_packet()
+		var message = packet.get_string_from_utf8()
+		_handle_server_response(message)
+	
 	# Handle fullscreen toggle (ESC key)
 	if Input.is_action_just_pressed("ui_cancel"):
 		_toggle_fullscreen()
@@ -330,6 +353,63 @@ func send_command_to_server(command: String):
 		print("❌ Failed to send command:", command)
 	
 	udp.close()
+
+
+func _handle_server_response(message: String):
+	"""Handle response from server"""
+	print("📩 Received response:", message)
+	
+	if message.begins_with("SCREENSHOT_SUCCESS:"):
+		# Parse response: SCREENSHOT_SUCCESS:path|size
+		var parts = message.substr(19).split("|")  # Remove "SCREENSHOT_SUCCESS:"
+		if parts.size() >= 2:
+			var filepath = parts[0]
+			var filesize = parts[1]
+			_show_notification_popup(
+				"📸 Foto Berhasil Disimpan!",
+				"File: %s\nSize: %s" % [filepath, filesize],
+				true
+			)
+		else:
+			_show_notification_popup(
+				"📸 Foto Tersimpan!",
+				"Screenshot berhasil disimpan",
+				true
+			)
+	
+	elif message.begins_with("SCREENSHOT_FAILED:"):
+		var error = message.substr(18)  # Remove "SCREENSHOT_FAILED:"
+		_show_notification_popup(
+			"❌ Foto Gagal",
+			"Error: %s" % error,
+			false
+		)
+
+
+func _show_notification_popup(title: String, description: String, is_success: bool):
+	"""Show notification popup dialog"""
+	var dialog = AcceptDialog.new()
+	dialog.title = title
+	dialog.dialog_text = description
+	dialog.ok_button_text = "OK"
+	
+	# Customize styling
+	if is_success:
+		dialog.add_theme_color_override("title_color", Color(0.3, 1.0, 0.3))  # Green
+	else:
+		dialog.add_theme_color_override("title_color", Color(1.0, 0.3, 0.3))  # Red
+	
+	# Set dialog size
+	dialog.min_size = Vector2(500, 200)
+	
+	# Add to scene
+	add_child(dialog)
+	dialog.popup_centered()
+	
+	# Auto-close after some time
+	await get_tree().create_timer(5.0).timeout
+	if dialog and is_instance_valid(dialog):
+		dialog.queue_free()
 
 
 func _notification(what):

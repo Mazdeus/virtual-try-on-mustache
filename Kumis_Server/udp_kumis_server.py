@@ -394,8 +394,8 @@ class UDPKumisServer:
                         self._set_kumis_color(color_param)
                 
                 elif cmd == 'SCREENSHOT' or cmd == 'CAPTURE':
-                    # Capture screenshot
-                    self._save_screenshot()
+                    # Capture screenshot and send response back to client
+                    self._save_screenshot(client_addr=addr)
                 
                 elif cmd == 'DISCONNECT':
                     # Remove client
@@ -596,10 +596,12 @@ class UDPKumisServer:
         except Exception as e:
             print(f"  ❌ Error setting color: {e}")
     
-    def _save_screenshot(self):
-        """Save current frame as screenshot."""
+    def _save_screenshot(self, client_addr=None):
+        """Save current frame as screenshot and notify client."""
         if self.latest_frame is None:
             print(f"  ⚠️ No frame available for screenshot")
+            if client_addr:
+                self._send_response(client_addr, "SCREENSHOT_FAILED:No frame available")
             return
         
         try:
@@ -612,11 +614,32 @@ class UDPKumisServer:
             # Save with high quality
             cv2.imwrite(str(filepath), self.latest_frame, [cv2.IMWRITE_JPEG_QUALITY, 95])
             
-            print(f"  📸 Screenshot saved: {filepath}")
-            print(f"  ✅ File size: {filepath.stat().st_size / 1024:.1f} KB")
+            # Get absolute path
+            abs_path = filepath.resolve()
+            file_size_kb = abs_path.stat().st_size / 1024
+            
+            print(f"  📸 Screenshot saved: {abs_path}")
+            print(f"  ✅ File size: {file_size_kb:.1f} KB")
+            
+            # Send success response to client with filepath
+            if client_addr:
+                response = f"SCREENSHOT_SUCCESS:{abs_path}|{file_size_kb:.1f}KB"
+                self._send_response(client_addr, response)
             
         except Exception as e:
             print(f"  ❌ Error saving screenshot: {e}")
+            if client_addr:
+                self._send_response(client_addr, f"SCREENSHOT_FAILED:{str(e)}")
+    
+    def _send_response(self, client_addr, message):
+        """Send response message back to client."""
+        try:
+            # Send to dedicated response port (7777)
+            response_addr = (client_addr[0], 7777)
+            self.sock.sendto(message.encode('utf-8'), response_addr)
+            print(f"  📤 Response sent to {response_addr}: {message[:50]}...")
+        except Exception as e:
+            print(f"  ⚠️ Failed to send response: {e}")
 
 
 def main():
