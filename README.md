@@ -17,6 +17,8 @@ Aplikasi Virtual Try-On untuk berbagai style kumis menggunakan **Machine Learnin
 ### 🎯 Fitur Utama
 
 - ✅ **12 Style Kumis** - Berbagai gaya kumis dari klasik hingga modern
+- ✅ **6 Preset Warna** - Black, Brown, Blonde, Red, Gray, White + custom HSV
+- ✅ **Screenshot Feature** - Simpan foto hasil try-on dengan popup notification
 - ✅ **Real-time Detection** - Face detection dengan SVM+ORB (50-60ms inference)
 - ✅ **Smart Validation** - 6-layer pipeline (Haar + SVM + Eye Detection)
 - ✅ **Rotation Support** - Kumis ikut rotasi saat kepala miring (angle smoothing)
@@ -53,6 +55,9 @@ virtual-try-on-mustache/
 │   │   ├── codebook_256.pkl         # K-Means codebook (BoVW)
 │   │   └── scaler.pkl               # StandardScaler (normalization)
 │   │
+│   ├── screenshots/                  # Screenshot output folder
+│   │   └── kumis_[style]_[timestamp].jpg  # Auto-saved photos
+│   │
 │   ├── assets/kumis/                 # Kumis images (PNG with alpha)
 │   │   └── kumis_1.png ... kumis_12.png
 │   │
@@ -65,7 +70,7 @@ virtual-try-on-mustache/
 │       ├── features.py              # ORB + BoVW encoding
 │       ├── train.py                 # SVM training script
 │       ├── infer.py                 # FaceDetector (6-layer validation)
-│       └── overlay.py               # KumisOverlay (rotation + blending)
+│       └── overlay.py               # KumisOverlay (rotation + blending + colorization)
 │
 └── Kumis_App/                        # Godot Frontend (UI + UDP Client)
     ├── project.godot                 # Godot project config
@@ -141,8 +146,10 @@ virtual-try-on-mustache/
 **Commands:**
 ```
 CONNECT                    # Register client
-SET_KUMIS kumis_5.png     # Load kumis style
+SELECT_KUMIS:5            # Select kumis by index (1-12)
 TOGGLE_KUMIS              # Show/hide overlay
+COLOR:BROWN               # Set kumis color (BLACK/BROWN/BLONDE/RED/GRAY/WHITE)
+SCREENSHOT                # Capture and save photo
 ```
 
 ---
@@ -356,32 +363,32 @@ cd Kumis_App
 │  [❌ Keluar]                     │
 └─────────────────────────────────┘
          ↓
-┌─────────────────────────────────┐
-│    KUMIS SELECTION              │
-│  ┌───┬───┬───┬───┐             │
-│  │ 1 │ 2 │ 3 │ 4 │             │  ← Click salah satu kumis
-│  ├───┼───┼───┼───┤             │
-│  │ 5 │ 6 │ 7 │ 8 │             │
-│  ├───┼───┼───┼───┤             │
-│  │ 9 │10 │11 │12 │             │
-│  └───┴───┴───┴───┘             │
-│                                 │
-│  [✓ Pilih Kumis]  [← Kembali]  │  ← Click "Pilih Kumis"
-└─────────────────────────────────┘
-         ↓
-┌─────────────────────────────────┐
-│    WEBCAM DISPLAY               │
-│  ┌─────────────────────────┐   │
-│  │                         │   │
-│  │   [Live Video Feed]     │   │  ← Kumis overlay real-time!
-│  │   dengan kumis overlay  │   │
-│  │                         │   │
-│  └─────────────────────────┘   │
-│                                 │
-│  Spacebar: Toggle ON/OFF        │
-│  ESC: Fullscreen                │
-│  Q: Quit                        │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│    WEBCAM DISPLAY with CONTROLS         │
+│  ┌─────────────────────────────┐       │
+│  │                             │       │
+│  │   [Live Video Feed]         │       │  ← Kumis overlay real-time!
+│  │   dengan kumis overlay      │       │
+│  │                             │       │
+│  └─────────────────────────────┘       │
+│                                         │
+│  Controls:                              │
+│  [← Kembali] [👁 Toggle] [📸 Foto]    │
+│                                         │
+│  ┌─── Pilih Kumis ───┐                │
+│  │ [1] [2] [3] [4]   │                │
+│  │ [5] [6] [7] [8]   │  ← Click untuk │
+│  │ [9] [10][11][12]  │     ganti kumis │
+│  └───────────────────┘                 │
+│                                         │
+│  ┌─── Warna Kumis ───┐                │
+│  │ [⚫Black] [🟤Brown] [🟡Blonde]    │  ← Click untuk
+│  │ [🔴Red]   [⚪Gray]  [⚪White]     │     ganti warna
+│  └────────────────────┘                │
+│                                         │
+│  Spacebar: Toggle ON/OFF                │
+│  ESC: Fullscreen                        │
+└─────────────────────────────────────────┘
 ```
 
 ---
@@ -392,8 +399,9 @@ cd Kumis_App
 |-----|--------|------------|
 | **Spacebar** | Toggle kumis ON/OFF | Menyembunyikan/menampilkan kumis |
 | **ESC** | Toggle fullscreen | Fullscreen ↔ Windowed |
-| **Q** | Quit aplikasi | Keluar dari aplikasi |
-| **← (Back button)** | Kembali ke menu | Di scene Selection/Webcam |
+| **Mouse Click** | Select kumis/color | Pilih style atau warna kumis |
+| **📸 Button** | Screenshot | Simpan foto (popup notification) |
+| **← Button** | Kembali ke menu | Di scene Webcam |
 
 ---
 
@@ -426,6 +434,21 @@ Sudut rotasi: -45° hingga +45° (angle smoothing applied)
 ```
 Spacebar ON: Kumis ditampilkan (overlay aktif)
 Spacebar OFF: Kumis disembunyikan (hanya face detection)
+```
+
+### Color Picker
+```
+Click warna → Kumis berubah warna real-time
+Preset: Black, Brown, Blonde, Red, Gray, White
+HSV colorization (only dark pixels = mustache)
+```
+
+### Screenshot Feature
+```
+Click "📸 Foto" → Photo saved to screenshots/ folder
+Popup shows: Full path + file size
+Auto-naming: kumis_[style]_[timestamp].jpg
+Example: kumis_kumis_5_20251103_143022.jpg (72.5 KB)
 ```
 
 ---
@@ -464,6 +487,16 @@ taskkill /PID <PID> /F          # Kill process
 - ✅ Check Python console: "Face detected" messages
 - ✅ Improve lighting (face camera directly)
 - ✅ Check file exists: `Kumis_Server/assets/kumis/kumis_X.png`
+
+**Screenshot tidak tersimpan**
+- ✅ Check folder exists: `Kumis_Server/screenshots/`
+- ✅ Check disk space (min 10MB free)
+- ✅ Check Python console for error messages
+
+**Color tidak berubah**
+- ✅ Ensure kumis sudah dipilih (loaded)
+- ✅ Check Python console: "Color applied" messages
+- ✅ Kumis must be dark/black (HSV colorization works on dark pixels)
 
 ---
 
@@ -508,10 +541,17 @@ Kumis_Server/reports/benchmark_official.json
 
 ## 🎉 Version History
 
+- **v2.1.0** (November 2025) - Feature Expansion
+  - ✨ Color Picker: 6 preset colors + custom HSV
+  - 📸 Screenshot: Auto-save with popup notification
+  - 🔔 Real-time notification with file path & size
+  - 🎨 HSV-based colorization (dark pixel masking)
+  - 📁 Organized screenshot folder with timestamps
+
 - **v2.0.0** (November 2025) - Virtual Try-On Kumis
   - Classical ML (SVM+ORB+BoVW) pipeline
   - 6-layer validation (Haar + SVM + Eye Detection)
   - 12 kumis styles, temporal smoothing, angle smoothing
-  - Performance: 83.8% accuracy, 50-60ms inference
+  - Performance: 78.2% accuracy, 50-60ms inference
 
 ---

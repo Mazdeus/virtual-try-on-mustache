@@ -154,8 +154,9 @@ Namun, kebanyakan solusi:
 
 | Protocol | Port | Direction | Purpose |
 |----------|------|-----------|---------|
-| **UDP** | 8888 | Client → Server | Commands (CONNECT, SET_KUMIS, etc.) |
+| **UDP** | 8888 | Client → Server | Commands (CONNECT, SELECT_KUMIS, COLOR, SCREENSHOT, etc.) |
 | **UDP** | 9999 | Server → Client | Video frames (JPEG encoded) |
+| **UDP** | 7777 | Server → Client | Response messages (screenshot success, errors) |
 
 ### Development Tools
 
@@ -205,6 +206,11 @@ Namun, kebanyakan solusi:
 - Alpha blending for transparency
 - Scale and rotation adjustment
 - Smooth overlay integration
+- **HSV-based colorization** (NEW)
+  - `set_color(hue, saturation, value)` method
+  - Dark pixel masking (threshold < 50)
+  - Preserves original kumis for color reset
+  - Real-time color transformation
 
 **`utils.py`** - Utility functions
 - Performance metrics (accuracy, precision, recall, F1)
@@ -236,8 +242,16 @@ python app.py webcam
 - Multi-threaded architecture
 - Command listener (port 8888)
 - Frame broadcaster (port 9999)
+- **Response sender (port 7777)** (NEW)
 - Client management
 - Kumis switching on-the-fly
+- **Color change handler** (NEW)
+- **Screenshot capture with server-side saving** (NEW)
+  - `_save_screenshot(client_addr)` method
+  - JPEG format (95% quality)
+  - Timestamp-based naming
+  - File size calculation
+  - Client notification via UDP response
 - Error handling & logging
 
 ---
@@ -690,7 +704,10 @@ Face             33     67     (67.0% sensitivity)
 **Command Packet (Client → Server, Port 8888):**
 ```
 CONNECT\n
-SET_KUMIS kumis_5.png\n
+SELECT_KUMIS kumis_5.png\n
+COLOR BLACK\n              # Color presets
+COLOR H:10,S:180,V:80\n    # Custom HSV
+SCREENSHOT\n               # Capture with server-side save
 TOGGLE_KUMIS\n
 DISCONNECT\n
 ```
@@ -702,6 +719,12 @@ DISCONNECT\n
 - Format: JPEG (quality=40 for balance)
 - Resolution: 640x480
 - FPS: 15-20
+```
+
+**Response Packet (Server → Client, Port 7777):**
+```
+SCREENSHOT_SUCCESS:D:\path\to\screenshots\kumis_kumis_8_20251103_151424.jpg|69.7KB\n
+SCREENSHOT_ERROR:Failed to save screenshot\n
 ```
 
 ---
@@ -718,8 +741,16 @@ def command_listener():
         
         if command == "CONNECT":
             clients.add(addr)
-        elif command.startswith("SET_KUMIS"):
+        elif command.startswith("SELECT_KUMIS"):
             current_kumis = command.split()[1]
+        elif command.startswith("COLOR"):
+            # Handle color change (preset or custom HSV)
+            color_value = command.split(maxsplit=1)[1]
+            _set_kumis_color(color_value)
+        elif command == "SCREENSHOT":
+            # Save screenshot and send response
+            filepath = _save_screenshot(addr)
+            _send_response(addr, f"SCREENSHOT_SUCCESS:{filepath}")
         # ... handle other commands
 
 # Thread 2: Frame Broadcaster
@@ -834,6 +865,15 @@ threading.Thread(target=frame_broadcaster).start()
 - `Label`: Status indicator (Connected/Error)
 - `Button`: "◄ Kembali" (back to selection)
 - `Button`: "👁️ Sembunyikan/Tampilkan" (toggle overlay)
+- **`Panel`: Color Picker Grid** (NEW)
+  - 6 color preset buttons (Black, Brown, Blonde, Red, Gray, White)
+  - 3-column GridContainer layout
+  - Visual color preview with StyleBoxFlat
+  - Click to apply color in real-time
+- **`Button`: "📸 Ambil Foto"** (NEW)
+  - Triggers screenshot capture
+  - Server-side file saving
+  - Shows popup notification with file path
 
 ---
 
@@ -877,39 +917,60 @@ threading.Thread(target=frame_broadcaster).start()
 
 ### Advanced Features
 
-7. **Automatic Positioning**
-   - Eye detection for alignment
-   - Scale based on face size
-   - Rotation compensation (future)
+7. **Kumis Colorization** 🎨
+   - HSV-based color transformation
+   - 6 color presets (Black, Brown, Blonde, Red, Gray, White)
+   - Custom HSV values support
+   - Dark pixel masking for natural look
+   - Real-time color preview
 
-8. **Alpha Blending**
-   - Smooth transparency
-   - Natural overlay integration
-   - No artifacts
+8. **Screenshot Capture** 📸
+   - High-quality JPEG (95% quality)
+   - Server-side file saving
+   - Auto-naming with timestamp
+   - File size calculation
+   - Saved in `screenshots/` folder
 
-9. **Performance Monitoring**
-   - FPS counter
-   - Frame drop detection
-   - Network status indicator
+9. **Notification System** 🔔
+   - Popup notifications for actions
+   - File path display for screenshots
+   - File size information
+   - Auto-close after 5 seconds
+   - UDP response-based (dual-port)
 
-10. **Dataset Tools**
+10. **Automatic Positioning**
+    - Eye detection for alignment
+    - Scale based on face size
+    - Rotation compensation (future)
+
+11. **Alpha Blending**
+    - Smooth transparency
+    - Natural overlay integration
+    - No artifacts
+
+12. **Performance Monitoring**
+    - FPS counter
+    - Frame drop detection
+    - Network status indicator
+
+13. **Dataset Tools**
     - Webcam collection mode
     - Unsplash download script
     - Kaggle integration
     - Validation utilities
 
-11. **Model Training**
+14. **Model Training**
     - CLI tool for training
     - Hyperparameter tuning
     - Evaluation metrics
     - Visualization (confusion matrix, ROC)
 
-12. **Modular Architecture**
+15. **Modular Architecture**
     - Separate pipelines
     - Easy to extend
     - Swappable components (e.g., swap SVM with RandomForest)
 
-13. **Cross-Platform**
+16. **Cross-Platform**
     - Windows, Linux, macOS
     - Python 3.8-3.12
     - No platform-specific code
@@ -1040,7 +1101,7 @@ Filter-Face-Godot-Ver-main/
 │   │   ├── features.py              # ORB feature extraction
 │   │   ├── train.py                 # SVM training
 │   │   ├── infer.py                 # Face detection
-│   │   ├── overlay.py               # Kumis overlay
+│   │   ├── overlay.py               # Kumis overlay + HSV colorization
 │   │   └── utils.py                 # Utilities
 │   │
 │   ├── models/                      # Trained models
@@ -1065,8 +1126,11 @@ Filter-Face-Godot-Ver-main/
 │   │   ├── pr_curve.png
 │   │   └── roc_curve.png
 │   │
+│   ├── screenshots/                 # Captured screenshots (gitignored)
+│   │   └── kumis_*.jpg              # Auto-saved images
+│   │
 │   ├── app.py                       # CLI tool (train/eval/infer/webcam)
-│   ├── udp_kumis_server.py          # Production UDP server
+│   ├── udp_kumis_server.py          # Production UDP server (dual-port)
 │   ├── collect_dataset.py           # Dataset collection tool
 │   ├── download_unsplash.py         # Unsplash download script
 │   └── requirements.txt             # Python dependencies
@@ -1438,6 +1502,6 @@ The architecture is designed for extensibility. Whether adding more kumis styles
 
 ---
 
-*Last updated: October 28, 2025*  
-*Version: 1.0.0*  
+*Last updated: November 3, 2025*  
+*Version: 2.1.0*  
 *Status: Production Ready ✅*
